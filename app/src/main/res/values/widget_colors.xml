@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_background">#FF181A20</color>
+    <color name="widget_text_primary">#FFFFFFFF</color>
+    <color name="widget_text_secondary">#FF9CA3AF</color>
+    <color name="widget_profit">#FF22C55E</color>
+    <color name="widget_loss">#FFEF4444</color>
+    <color name="widget_warning">#FFF59E0B</color>
+</resources>

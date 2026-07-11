@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sist - Finans Takibi</string>
+    <string name="budget_widget_name">Bütçe Durumu</string>
+    <string name="portfolio_widget_name">Portföy Durumu</string>
+    <string name="upcoming_widget_name">Yaklaşan Ödemeler</string>
+    <string name="quick_add_widget_name">Hızlı Harcama</string>
+</resources>
