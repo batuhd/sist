@@ -41,17 +41,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            val isTermsAccepted by termsRepository.isTermsAccepted().collectAsState(initial = false)
+            val isTermsAccepted by termsRepository.isTermsAccepted().collectAsState(initial = null)
 
             SistTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (isTermsAccepted) {
-                        MainNavigation()
-                    } else {
-                        TermsScreen(
+                    when (isTermsAccepted) {
+                        null -> {
+                            // Loading state: show blank surface while reading DataStore
+                        }
+                        true -> MainNavigation()
+                        false -> TermsScreen(
                             onAccept = {
                                 lifecycleScope.launch {
                                     termsRepository.setTermsAccepted(true)
