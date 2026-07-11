@@ -17,6 +17,7 @@ import com.sinop.sist.data.repository.DebtRepositoryImpl
 import com.sinop.sist.data.repository.InstallmentRepositoryImpl
 import com.sinop.sist.data.repository.PriceCacheRepositoryImpl
 import com.sinop.sist.data.repository.RecurringTransactionRepositoryImpl
+import com.sinop.sist.data.repository.TermsRepositoryImpl
 import com.sinop.sist.data.repository.TransactionRepositoryImpl
 import com.sinop.sist.domain.repository.AccountRepository
 import com.sinop.sist.domain.usecase.RefreshAssetPricesUseCase
@@ -30,6 +31,7 @@ import com.sinop.sist.domain.repository.DebtRepository
 import com.sinop.sist.domain.repository.InstallmentRepository
 import com.sinop.sist.domain.repository.PriceCacheRepository
 import com.sinop.sist.domain.repository.RecurringTransactionRepository
+import com.sinop.sist.domain.repository.TermsRepository
 import com.sinop.sist.domain.repository.TransactionRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -152,5 +154,9 @@ class AppContainer(private val application: Application) {
 
     val accountRepository: AccountRepository by lazy {
         AccountRepositoryImpl(database.accountDao())
+    }
+
+    val termsRepository: TermsRepository by lazy {
+        TermsRepositoryImpl(application)
     }
 }
