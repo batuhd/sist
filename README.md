@@ -1,4 +1,4 @@
-# 💰 Sist — Kişisel Finans ve Yatırım Takibi
+# 💰 Sist - Kişisel Finans ve Yatırım Takibi
 
 > Gelir, gider, yatırım ve bütçenizi tek bir yerden, güvenle yönetin.
 
@@ -41,10 +41,10 @@
 - Tekrarlayan işlem bildirimleri
 
 ### 🏠 Ana Ekran Widget'ları
-- **Portföy Widget'ı** — Toplam değer, kâr/zarar ve varlık listesi
-- **Bütçe Widget'ı** — Aylık bütçe durumu ve ilerleme çubuğu
-- **Toplam Varlık Widget'ı** — Hesaplar + portföy toplamı
-- **Hızlı Ekle Widget'ı** — Ana ekrandan hızlı gelir/gider ekleme
+- **Portföy Widget'ı** - Toplam değer, kâr/zarar ve varlık listesi
+- **Bütçe Widget'ı** - Aylık bütçe durumu ve ilerleme çubuğu
+- **Toplam Varlık Widget'ı** - Hesaplar + portföy toplamı
+- **Hızlı Ekle Widget'ı** - Ana ekrandan hızlı gelir/gider ekleme
 
 ### 🔒 Güvenlik
 - Biyometrik kimlik doğrulama (parmak izi / yüz tanıma)
