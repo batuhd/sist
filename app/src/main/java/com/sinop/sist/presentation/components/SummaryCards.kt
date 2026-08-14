@@ -26,11 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.sinop.sist.ui.theme.IncomeGreen
-import com.sinop.sist.ui.theme.IncomeGreenLight
-import com.sinop.sist.ui.theme.Primary100
+import com.sinop.sist.ui.theme.Error80
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.Primary90
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 
 @Composable
@@ -41,16 +42,17 @@ fun SummaryCards(
     modifier: Modifier = Modifier,
     currencyCode: String = "TRY"
 ) {
+    val sistColors = LocalSistColors.current
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clip(RoundedCornerShape(32.dp))
+            .clip(RoundedCornerShape(SistRadius.pill))
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                        sistColors.hero,
+                        sistColors.heroVariant
                     )
                 )
             )
@@ -60,14 +62,13 @@ fun SummaryCards(
             Text(
                 text = "Toplam Bakiye",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Primary100.copy(alpha = 0.8f)
+                color = sistColors.onHero.copy(alpha = 0.75f)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = balance.formatCurrency(currencyCode),
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                color = Primary100
+                style = SistTypography.amountDisplay,
+                color = sistColors.onHero
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -80,16 +81,16 @@ fun SummaryCards(
                     label = "Gelir",
                     amount = income.formatCurrency(currencyCode),
                     icon = Icons.Default.ArrowUpward,
-                    backgroundColor = IncomeGreenLight.copy(alpha = 0.95f),
-                    contentColor = IncomeGreen,
+                    backgroundColor = sistColors.onHero.copy(alpha = 0.10f),
+                    contentColor = Primary90,
                     modifier = Modifier.weight(1f)
                 )
                 MiniSummaryCard(
                     label = "Gider",
                     amount = expense.formatCurrency(currencyCode),
                     icon = Icons.Default.ArrowDownward,
-                    backgroundColor = Color(0xFFFFE8E8),
-                    contentColor = Color(0xFFEF4444),
+                    backgroundColor = sistColors.onHero.copy(alpha = 0.10f),
+                    contentColor = Error80,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -119,7 +120,7 @@ private fun MiniSummaryCard(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(contentColor.copy(alpha = 0.15f)),
+                    .background(contentColor.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -134,12 +135,11 @@ private fun MiniSummaryCard(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodySmall,
-                    color = contentColor.copy(alpha = 0.7f)
+                    color = contentColor.copy(alpha = 0.85f)
                 )
                 Text(
                     text = amount,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
+                    style = SistTypography.amountTitle,
                     color = contentColor
                 )
             }
