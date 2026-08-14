@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sinop.sist.domain.model.AssetType
 import com.sinop.sist.presentation.components.SistTopBar
+import com.sinop.sist.ui.theme.SistRadius
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -81,7 +82,7 @@ fun AddAssetScreen(
                 label = { Text("Sembol") },
                 placeholder = { Text("Örn: THYAO, GARAN, XU100") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
@@ -92,7 +93,7 @@ fun AddAssetScreen(
                 label = { Text("Ad (opsiyonel)") },
                 placeholder = { Text("Örn: Türk Hava Yolları") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true
             )
 
@@ -122,7 +123,7 @@ fun AddAssetScreen(
                 onValueChange = viewModel::onCurrentPriceChange,
                 label = { Text("Güncel Fiyat (opsiyonel)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
             )
@@ -132,7 +133,7 @@ fun AddAssetScreen(
                 onValueChange = viewModel::onCurrencyChange,
                 label = { Text("Para Birimi") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true
             )
 
@@ -151,7 +152,7 @@ fun AddAssetScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Text(
                     text = if (state.isEditing) "Güncelle" else "Kaydet",
