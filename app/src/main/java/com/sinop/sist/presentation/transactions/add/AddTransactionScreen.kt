@@ -133,6 +133,14 @@ fun AddTransactionScreen(
                     lightColor = ExpenseRedLight,
                     modifier = Modifier.weight(1f)
                 )
+                TypeCard(
+                    label = "Transfer",
+                    selected = state.type == TransactionType.TRANSFER,
+                    onClick = { viewModel.onTypeChange(TransactionType.TRANSFER) },
+                    color = MaterialTheme.colorScheme.primary,
+                    lightColor = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             // Amount input
@@ -169,32 +177,54 @@ fun AddTransactionScreen(
                 )
             }
 
-            // Category selection
-            Column {
-                Text(
-                    text = "Kategori",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    val filteredCategories = state.categories.filter {
-                        it.type == CategoryType.BOTH ||
-                                (state.type == TransactionType.INCOME && it.type == CategoryType.INCOME) ||
-                                (state.type == TransactionType.EXPENSE && it.type == CategoryType.EXPENSE)
-                    }
-                    filteredCategories.forEach { category ->
-                        CategoryChip(
-                            category = category,
-                            selected = state.categoryId == category.id,
-                            onClick = { viewModel.onCategoryChange(category.id) }
-                        )
+            // Category selection (not shown for transfers)
+            if (state.type != TransactionType.TRANSFER) {
+                Column {
+                    Text(
+                        text = "Kategori",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        val filteredCategories = state.categories.filter {
+                            it.type == CategoryType.BOTH ||
+                                    (state.type == TransactionType.INCOME && it.type == CategoryType.INCOME) ||
+                                    (state.type == TransactionType.EXPENSE && it.type == CategoryType.EXPENSE)
+                        }
+                        filteredCategories.forEach { category ->
+                            CategoryChip(
+                                category = category,
+                                selected = state.categoryId == category.id,
+                                onClick = { viewModel.onCategoryChange(category.id) }
+                            )
+                        }
                     }
                 }
+            }
+
+            // Transfer account selection (investment accounts are excluded;
+            // money moves to/from the portfolio only via buy/sell)
+            if (state.type == TransactionType.TRANSFER) {
+                val transferableAccounts = state.accounts.filter {
+                    it.type == AccountType.CASH || it.type == AccountType.BANK
+                }
+                TransferAccountSection(
+                    title = "Kaynak Hesap",
+                    accounts = transferableAccounts,
+                    selectedAccountId = state.accountId,
+                    onAccountClick = { viewModel.onAccountChange(it) }
+                )
+                TransferAccountSection(
+                    title = "Hedef Hesap",
+                    accounts = transferableAccounts,
+                    selectedAccountId = state.toAccountId,
+                    onAccountClick = { viewModel.onToAccountChange(it) }
+                )
             }
 
             // Date field
@@ -212,25 +242,27 @@ fun AddTransactionScreen(
                 }
             )
 
-            // Payment method
-            Column {
-                Text(
-                    text = "Ödeme Yöntemi",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    PaymentMethod.entries.forEach { method ->
-                        FilterChip(
-                            selected = state.paymentMethod == method,
-                            onClick = { viewModel.onPaymentMethodChange(method) },
-                            label = { Text(paymentMethodLabel(method)) }
-                        )
+            // Payment method (hidden for transfers)
+            if (state.type != TransactionType.TRANSFER) {
+                Column {
+                    Text(
+                        text = "Ödeme Yöntemi",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        PaymentMethod.entries.forEach { method ->
+                            FilterChip(
+                                selected = state.paymentMethod == method,
+                                onClick = { viewModel.onPaymentMethodChange(method) },
+                                label = { Text(paymentMethodLabel(method)) }
+                            )
+                        }
                     }
                 }
             }
@@ -337,6 +369,44 @@ fun AddTransactionScreen(
             }
         ) {
             DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@Composable
+private fun TransferAccountSection(
+    title: String,
+    accounts: List<Account>,
+    selectedAccountId: Long?,
+    onAccountClick: (Long) -> Unit
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        if (accounts.isEmpty()) {
+            Text(
+                text = "Henüz hesap bulunmuyor. Ana sayfadan hesap ekleyebilirsiniz.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                accounts.forEach { account ->
+                    AccountChip(
+                        account = account,
+                        selected = selectedAccountId == account.id,
+                        onClick = { onAccountClick(account.id) }
+                    )
+                }
+            }
         }
     }
 }

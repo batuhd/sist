@@ -3,6 +3,7 @@ package com.sinop.sist.util
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -26,6 +27,10 @@ fun Double.formatCurrency(currencyCode: String = "TRY"): String {
     }
 }
 
+fun Double.formatSignedCurrency(currencyCode: String = "TRY"): String {
+    return if (this >= 0) "+${formatCurrency(currencyCode)}" else formatCurrency(currencyCode)
+}
+
 fun Double.formatPercent(): String {
     val sign = if (this >= 0) "+" else ""
     return "$sign${"%.2f".format(this)}%"
@@ -41,4 +46,10 @@ fun LocalDateTime.formatDate(): String {
 
 fun LocalDate.formatShort(): String {
     return this.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale("tr", "TR")))
+}
+
+fun YearMonth.periodRange(): Pair<LocalDateTime, LocalDateTime> {
+    val start = atDay(1).atStartOfDay()
+    val end = atEndOfMonth().atTime(23, 59, 59, 999_999_999)
+    return start to end
 }

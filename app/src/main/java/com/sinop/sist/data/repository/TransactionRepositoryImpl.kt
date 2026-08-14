@@ -56,6 +56,11 @@ class TransactionRepositoryImpl(
             .map { it ?: 0.0 }
     }
 
+    override fun getSumByTypeBefore(type: TransactionType, end: LocalDateTime): Flow<Double> {
+        return transactionDao.getSumByTypeBefore(type.name.lowercase(), end)
+            .map { it ?: 0.0 }
+    }
+
     override fun getByAccount(accountId: Long): Flow<List<Transaction>> {
         return transactionDao.getByAccount(accountId).map { list -> list.map { it.toDomain() } }
     }

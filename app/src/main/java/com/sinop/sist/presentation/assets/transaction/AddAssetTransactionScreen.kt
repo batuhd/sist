@@ -52,6 +52,7 @@ import com.sinop.sist.ui.theme.ExpenseRed
 import com.sinop.sist.ui.theme.ExpenseRedLight
 import com.sinop.sist.ui.theme.IncomeGreen
 import com.sinop.sist.ui.theme.IncomeGreenLight
+import com.sinop.sist.util.formatCurrency
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -150,6 +151,56 @@ fun AddAssetTransactionScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
             )
+
+            if (state.transactionType == AssetTransactionType.BUY && !state.isEditing) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    androidx.compose.material3.Switch(
+                        checked = state.linkTransfer,
+                        onCheckedChange = viewModel::onLinkTransferChange
+                    )
+                    Text(
+                        text = "Nakit/banka hesabından aktar (transfer)",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+                if (state.linkTransfer) {
+                    Text(
+                        text = "Para Çekilecek Hesap",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        state.accounts
+                            .filter { it.type == com.sinop.sist.domain.model.AccountType.CASH || it.type == com.sinop.sist.domain.model.AccountType.BANK }
+                            .forEach { account ->
+                                androidx.compose.material3.FilterChip(
+                                    selected = state.sourceAccountId == account.id,
+                                    onClick = { viewModel.onSourceAccountChange(account.id) },
+                                    label = { Text(account.name) }
+                                )
+                            }
+                    }
+                    state.selectedAccountBalance?.let { balance ->
+                        Text(
+                            text = "Kullanılabilir Bakiye: ${balance.formatCurrency()}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (balance >= 0) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error
+                        )
+                    }
+                    Text(
+                        text = "Bu tutar gider olarak işlenmez; sadece hesap bakiyenizden yatırıma aktarılır.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
             OutlinedTextField(
                 value = state.date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("tr", "TR"))),

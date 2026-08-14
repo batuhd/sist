@@ -51,6 +51,7 @@ class CategoriesViewModel(
     }
 
     fun deleteCategory(category: Category) {
+        if (category.isDefault && category.type == CategoryType.TRANSFER) return
         viewModelScope.launch {
             categoryRepository.delete(category)
         }

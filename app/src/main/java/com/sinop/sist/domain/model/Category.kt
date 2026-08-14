@@ -10,4 +10,4 @@ data class Category(
     val type: CategoryType = CategoryType.BOTH
 )
 
-enum class CategoryType { INCOME, EXPENSE, BOTH }
+enum class CategoryType { INCOME, EXPENSE, BOTH, TRANSFER }

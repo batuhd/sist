@@ -95,12 +95,21 @@ fun TransactionItem(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "${if (transaction.type == TransactionType.INCOME) "+" else "-"}${transaction.amount.formatCurrency(transaction.currencyCode)}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = if (transaction.type == TransactionType.INCOME) IncomeGreen else ExpenseRed
-                )
+                if (transaction.type == TransactionType.TRANSFER) {
+                    Text(
+                        text = transaction.amount.formatCurrency(transaction.currencyCode),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    Text(
+                        text = "${if (transaction.type == TransactionType.INCOME) "+" else "-"}${transaction.amount.formatCurrency(transaction.currencyCode)}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = if (transaction.type == TransactionType.INCOME) IncomeGreen else ExpenseRed
+                    )
+                }
                 Row {
                     IconButton(
                         onClick = onEdit,

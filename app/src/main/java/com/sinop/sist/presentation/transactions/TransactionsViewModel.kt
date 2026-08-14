@@ -9,45 +9,53 @@ import com.sinop.sist.domain.model.Transaction
 import com.sinop.sist.domain.model.TransactionType
 import com.sinop.sist.domain.repository.CategoryRepository
 import com.sinop.sist.domain.repository.TransactionRepository
+import com.sinop.sist.util.periodRange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import java.time.YearMonth
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class TransactionsViewModel(
     private val transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(TransactionsState())
     val state: StateFlow<TransactionsState> = _state.asStateFlow()
 
-    init {
-        loadData()
-    }
+    private val selectedMonth = MutableStateFlow(YearMonth.now())
+    private val sortOrder = MutableStateFlow(TransactionSortOrder.DATE_DESC)
 
-    private fun loadData() {
+    init {
         viewModelScope.launch {
             categoryRepository.seedDefaultCategories()
         }
 
-        val month = YearMonth.now()
-        val start = month.atDay(1).atStartOfDay()
-        val end = month.atEndOfMonth().atTime(23, 59, 59)
+        combine(selectedMonth, sortOrder) { month, _ -> month }
+            .flatMapLatest { month -> monthData(month) }
+            .launchIn(viewModelScope)
+    }
+
+    private fun monthData(month: YearMonth) = kotlinx.coroutines.flow.flow {
+        val (start, end) = month.periodRange()
+        val carryOverFlow = combine(
+            transactionRepository.getSumByTypeBefore(TransactionType.INCOME, start),
+            transactionRepository.getSumByTypeBefore(TransactionType.EXPENSE, start)
+        ) { priorIncome, priorExpense -> priorIncome - priorExpense }
 
         combine(
             transactionRepository.getBetween(start, end),
             categoryRepository.getAll(),
             transactionRepository.getSumByTypeAndPeriod(TransactionType.INCOME, start, end),
-            transactionRepository.getSumByTypeAndPeriod(TransactionType.EXPENSE, start, end)
-        ) { transactions, categories, income, expense ->
-            updateState(transactions, categories, income, expense)
-        }.launchIn(viewModelScope)
+            transactionRepository.getSumByTypeAndPeriod(TransactionType.EXPENSE, start, end),
+            carryOverFlow
+        ) { transactions, categories, income, expense, carryOver ->
+            updateState(transactions, categories, income, expense, carryOver)
+        }.collect { emit(it) }
     }
 
     fun deleteTransaction(transaction: Transaction) {
@@ -58,20 +66,11 @@ class TransactionsViewModel(
 
     fun selectMonth(yearMonth: YearMonth) {
         _state.value = _state.value.copy(selectedMonth = yearMonth)
-        val start = yearMonth.atDay(1).atStartOfDay()
-        val end = yearMonth.atEndOfMonth().atTime(23, 59, 59)
-
-        combine(
-            transactionRepository.getBetween(start, end),
-            categoryRepository.getAll(),
-            transactionRepository.getSumByTypeAndPeriod(TransactionType.INCOME, start, end),
-            transactionRepository.getSumByTypeAndPeriod(TransactionType.EXPENSE, start, end)
-        ) { transactions, categories, income, expense ->
-            updateState(transactions, categories, income, expense)
-        }.launchIn(viewModelScope)
+        selectedMonth.value = yearMonth
     }
 
     fun setSortOrder(order: TransactionSortOrder) {
+        sortOrder.value = order
         _state.value = _state.value.copy(sortOrder = order)
     }
 
@@ -83,7 +82,8 @@ class TransactionsViewModel(
         transactions: List<Transaction>,
         categories: List<Category>,
         income: Double,
-        expense: Double
+        expense: Double,
+        carryOverBalance: Double
     ) {
         val sorted = sortTransactions(transactions, _state.value.sortOrder)
         val expensesByCategory = transactions
@@ -101,6 +101,8 @@ class TransactionsViewModel(
             totalIncome = income,
             totalExpense = expense,
             balance = income - expense,
+            carryOverBalance = carryOverBalance,
+            monthEndBalance = carryOverBalance + income - expense,
             expensesByCategory = expensesByCategory
         )
     }
@@ -151,6 +153,8 @@ data class TransactionsState(
     val totalIncome: Double = 0.0,
     val totalExpense: Double = 0.0,
     val balance: Double = 0.0,
+    val carryOverBalance: Double = 0.0,
+    val monthEndBalance: Double = 0.0,
     val selectedMonth: YearMonth = YearMonth.now(),
     val sortOrder: TransactionSortOrder = TransactionSortOrder.DATE_DESC,
     val viewMode: TransactionViewMode = TransactionViewMode.LIST,

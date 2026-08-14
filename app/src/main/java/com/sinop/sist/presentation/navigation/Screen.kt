@@ -26,4 +26,5 @@ sealed class Screen(val route: String) {
     }
     data object Reports : Screen("reports")
     data object Settings : Screen("settings")
+    data object Logs : Screen("logs")
 }

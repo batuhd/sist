@@ -7,10 +7,10 @@ import com.sinop.sist.data.mapper.toEntity
 import com.sinop.sist.domain.model.Budget
 import com.sinop.sist.domain.model.BudgetWithSpending
 import com.sinop.sist.domain.repository.BudgetRepository
+import com.sinop.sist.util.periodRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import java.time.LocalDateTime
 import java.time.YearMonth
 
 class BudgetRepositoryImpl(
@@ -36,8 +36,7 @@ class BudgetRepositoryImpl(
 
     override fun getByMonth(month: YearMonth): Flow<List<BudgetWithSpending>> {
         val budgetsFlow = budgetDao.getByMonth(month.toString()).map { list -> list.map { it.toDomain() } }
-        val start = month.atDay(1).atStartOfDay()
-        val end = month.atEndOfMonth().atTime(23, 59, 59)
+        val (start, end) = month.periodRange()
 
         return budgetsFlow.combine(transactionDao.getBetween(start, end)) { budgets, transactions ->
             budgets.map { budget ->

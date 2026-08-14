@@ -106,7 +106,8 @@ class AssetRepositoryImpl(
                     currentValue = currentValue,
                     profitLoss = profitLoss,
                     profitLossPercent = profitLossPercent,
-                    priceSource = priceCache?.source
+                    priceSource = priceCache?.source,
+                    lastUpdated = priceCache?.lastUpdated
                 )
             }
         }

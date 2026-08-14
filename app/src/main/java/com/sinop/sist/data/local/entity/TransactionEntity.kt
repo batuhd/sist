@@ -9,9 +9,10 @@ data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val amount: Double,
-    val type: String, // "income" or "expense"
+    val type: String, // "income", "expense" or "transfer"
     val categoryId: Long,
     val accountId: Long? = null,
+    val toAccountId: Long? = null,
     val date: LocalDateTime,
     val note: String? = null,
     val tags: String? = null, // comma separated tags

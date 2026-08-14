@@ -23,19 +23,19 @@ class AssetsViewModel(
     private val _state = MutableStateFlow(AssetsState())
     val state: StateFlow<AssetsState> = _state.asStateFlow()
 
+    private var lastAutoRefreshAt: Long = 0L
+
     init {
         loadAssets()
         loadSummary()
-        refreshPrices()
     }
 
     private fun loadAssets() {
         assetRepository.getAssetsWithPrices()
             .onEach { assets ->
-                val hadAssets = _state.value.assets.isNotEmpty()
                 _state.value = _state.value.copy(assets = assets)
-                if (assets.isNotEmpty() && !hadAssets && !_state.value.isRefreshing) {
-                    refreshPrices()
+                if (assets.isNotEmpty()) {
+                    refreshIfStale()
                 }
             }
             .launchIn(viewModelScope)
@@ -55,6 +55,7 @@ class AssetsViewModel(
         if (assets.isEmpty()) return
 
         _state.value = _state.value.copy(isRefreshing = true, refreshMessage = null)
+        lastAutoRefreshAt = System.currentTimeMillis()
         viewModelScope.launch {
             val result = refreshAssetPricesUseCase(assets)
             val message = buildRefreshMessage(result)
@@ -62,6 +63,21 @@ class AssetsViewModel(
                 isRefreshing = false,
                 refreshMessage = message
             )
+        }
+    }
+
+    fun refreshIfStale() {
+        val assets = _state.value.assets
+        if (assets.isEmpty() || _state.value.isRefreshing) return
+
+        val now = java.time.LocalDateTime.now()
+        val stale = assets.any { asset ->
+            val lastUpdated = asset.lastUpdated
+            lastUpdated == null || lastUpdated.plusMinutes(PRICE_STALE_MINUTES).isBefore(now)
+        }
+        val minIntervalPassed = System.currentTimeMillis() - lastAutoRefreshAt >= MIN_REFRESH_INTERVAL_MS
+        if (stale && minIntervalPassed) {
+            refreshPrices()
         }
     }
 
@@ -82,6 +98,9 @@ class AssetsViewModel(
     }
 
     companion object {
+        private const val PRICE_STALE_MINUTES = 15L
+        private const val MIN_REFRESH_INTERVAL_MS = 5 * 60 * 1000L
+
         fun factory(): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

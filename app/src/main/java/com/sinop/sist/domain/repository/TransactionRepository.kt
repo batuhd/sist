@@ -14,5 +14,6 @@ interface TransactionRepository {
     fun getBetween(start: LocalDateTime, end: LocalDateTime): Flow<List<Transaction>>
     fun getByTypeAndPeriod(type: TransactionType, start: LocalDateTime, end: LocalDateTime): Flow<List<Transaction>>
     fun getSumByTypeAndPeriod(type: TransactionType, start: LocalDateTime, end: LocalDateTime): Flow<Double>
+    fun getSumByTypeBefore(type: TransactionType, end: LocalDateTime): Flow<Double>
     fun getByAccount(accountId: Long): Flow<List<Transaction>>
 }

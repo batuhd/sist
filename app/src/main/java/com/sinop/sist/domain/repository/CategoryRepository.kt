@@ -12,4 +12,5 @@ interface CategoryRepository {
     fun getAll(): Flow<List<Category>>
     fun getByType(type: CategoryType): Flow<List<Category>>
     suspend fun seedDefaultCategories(): List<Category>
+    suspend fun getTransferCategoryId(): Long?
 }

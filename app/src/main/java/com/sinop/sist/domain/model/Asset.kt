@@ -33,7 +33,8 @@ data class AssetWithPrice(
     val currentValue: Double?,
     val profitLoss: Double?,
     val profitLossPercent: Double?,
-    val priceSource: String? = null
+    val priceSource: String? = null,
+    val lastUpdated: java.time.LocalDateTime? = null
 )
 
 data class PortfolioSummary(

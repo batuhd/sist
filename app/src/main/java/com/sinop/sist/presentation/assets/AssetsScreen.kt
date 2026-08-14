@@ -70,6 +70,11 @@ fun AssetsScreen(
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
+    androidx.lifecycle.compose.LifecycleResumeEffect(Unit) {
+        viewModel.refreshIfStale()
+        onPauseOrDispose { }
+    }
+
     LaunchedEffect(state.refreshMessage) {
         state.refreshMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()

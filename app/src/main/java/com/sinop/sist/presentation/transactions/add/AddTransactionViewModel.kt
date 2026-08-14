@@ -57,7 +57,11 @@ class AddTransactionViewModel(
     private fun loadAccounts() {
         viewModelScope.launch {
             val accounts = accountRepository.seedDefaultAccounts()
-            _state.value = _state.value.copy(accounts = accounts)
+            _state.value = _state.value.copy(
+                accounts = accounts,
+                toAccountId = _state.value.toAccountId
+                    ?: accounts.firstOrNull { it.type == AccountType.BANK }?.id
+            )
         }
     }
 
@@ -69,6 +73,7 @@ class AddTransactionViewModel(
                     type = transaction.type,
                     categoryId = transaction.categoryId,
                     accountId = transaction.accountId,
+                    toAccountId = transaction.toAccountId,
                     date = transaction.date.toLocalDate(),
                     time = transaction.date.toLocalTime(),
                     note = transaction.note ?: "",
@@ -85,7 +90,17 @@ class AddTransactionViewModel(
     }
 
     fun onTypeChange(type: TransactionType) {
-        _state.value = _state.value.copy(type = type)
+        _state.value = _state.value.copy(type = type, error = null)
+        if (type == TransactionType.TRANSFER) {
+            viewModelScope.launch {
+                val transferCategoryId = categoryRepository.getTransferCategoryId()
+                _state.value = _state.value.copy(
+                    categoryId = transferCategoryId,
+                    accountId = _state.value.accountId
+                        ?: _state.value.accounts.firstOrNull { it.type == AccountType.CASH }?.id
+                )
+            }
+        }
     }
 
     fun onCategoryChange(categoryId: Long) {
@@ -125,6 +140,10 @@ class AddTransactionViewModel(
         _state.value = _state.value.copy(accountId = accountId)
     }
 
+    fun onToAccountChange(accountId: Long?) {
+        _state.value = _state.value.copy(toAccountId = accountId)
+    }
+
     fun saveTransaction() {
         val currentState = _state.value
         val amount = currentState.amount.toDoubleOrNull()
@@ -132,27 +151,44 @@ class AddTransactionViewModel(
             _state.value = currentState.copy(error = "Geçerli bir tutar girin")
             return
         }
-        if (currentState.categoryId == null) {
+
+        if (currentState.type == TransactionType.TRANSFER) {
+            if (currentState.accountId == null || currentState.toAccountId == null) {
+                _state.value = currentState.copy(error = "Kaynak ve hedef hesap seçin")
+                return
+            }
+            if (currentState.accountId == currentState.toAccountId) {
+                _state.value = currentState.copy(error = "Kaynak ve hedef hesap aynı olamaz")
+                return
+            }
+        } else if (currentState.categoryId == null) {
             _state.value = currentState.copy(error = "Kategori seçin")
             return
         }
 
-        val accountId = currentState.accountId ?: when (currentState.paymentMethod) {
-            PaymentMethod.CASH -> currentState.accounts.find { it.type == AccountType.CASH }?.id
-            PaymentMethod.BANK -> currentState.accounts.find { it.type == AccountType.BANK }?.id
-            else -> currentState.accounts.firstOrNull()?.id
+        val accountId = if (currentState.type == TransactionType.TRANSFER) {
+            currentState.accountId
+        } else {
+            currentState.accountId ?: when (currentState.paymentMethod) {
+                PaymentMethod.CASH -> currentState.accounts.find { it.type == AccountType.CASH }?.id
+                PaymentMethod.BANK -> currentState.accounts.find { it.type == AccountType.BANK }?.id
+                else -> currentState.accounts.firstOrNull()?.id
+            }
         }
+
+        val categoryId = currentState.categoryId ?: 0L
 
         val transaction = Transaction(
             id = transactionId ?: 0,
             amount = amount,
             type = currentState.type,
-            categoryId = currentState.categoryId,
+            categoryId = categoryId,
             accountId = accountId,
+            toAccountId = if (currentState.type == TransactionType.TRANSFER) currentState.toAccountId else null,
             date = LocalDateTime.of(currentState.date, currentState.time),
             note = currentState.note.takeIf { it.isNotBlank() },
             tags = currentState.tags.split(",").map { it.trim() }.filter { it.isNotEmpty() },
-            paymentMethod = currentState.paymentMethod
+            paymentMethod = if (currentState.type == TransactionType.TRANSFER) null else currentState.paymentMethod
         )
 
         viewModelScope.launch {
@@ -191,6 +227,7 @@ data class AddTransactionState(
     val type: TransactionType = TransactionType.EXPENSE,
     val categoryId: Long? = null,
     val accountId: Long? = null,
+    val toAccountId: Long? = null,
     val date: LocalDate = LocalDate.now(),
     val time: LocalTime = LocalTime.now(),
     val note: String = "",

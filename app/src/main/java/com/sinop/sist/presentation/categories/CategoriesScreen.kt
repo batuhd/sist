@@ -161,6 +161,7 @@ private fun CategoryListItem(
                             CategoryType.INCOME -> "Gelir"
                             CategoryType.EXPENSE -> "Gider"
                             CategoryType.BOTH -> "Gelir/Gider"
+                            CategoryType.TRANSFER -> "Transfer"
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -252,7 +253,7 @@ private fun AddCategoryDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CategoryType.entries.forEach { type ->
+                    CategoryType.entries.filter { it != CategoryType.TRANSFER }.forEach { type ->
                         FilterChip(
                             selected = selectedType == type,
                             onClick = { selectedType = type },
@@ -262,6 +263,7 @@ private fun AddCategoryDialog(
                                         CategoryType.INCOME -> "Gelir"
                                         CategoryType.EXPENSE -> "Gider"
                                         CategoryType.BOTH -> "Her ikisi"
+                                        CategoryType.TRANSFER -> "Transfer"
                                     }
                                 )
                             }

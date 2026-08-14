@@ -15,9 +15,15 @@ object WidgetDataProvider {
         val transactions = app.container.transactionRepository.getAll().first()
 
         return accounts.map { account ->
-            val balance = transactions
-                .filter { it.accountId == account.id }
-                .sumOf { if (it.type == TransactionType.INCOME) it.amount else -it.amount }
+            val balance = transactions.sumOf { transaction ->
+                when {
+                    transaction.type == TransactionType.TRANSFER && transaction.accountId == account.id -> -transaction.amount
+                    transaction.type == TransactionType.TRANSFER && transaction.toAccountId == account.id -> transaction.amount
+                    transaction.type == TransactionType.INCOME && transaction.accountId == account.id -> transaction.amount
+                    transaction.type == TransactionType.EXPENSE && transaction.accountId == account.id -> -transaction.amount
+                    else -> 0.0
+                }
+            }
             account.copy(balance = balance)
         }
     }

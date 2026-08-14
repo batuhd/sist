@@ -61,6 +61,7 @@ import com.sinop.sist.presentation.debts.DebtAndInstallmentScreen
 import com.sinop.sist.presentation.home.HomeScreen
 import com.sinop.sist.presentation.recurring.RecurringTransactionsScreen
 import com.sinop.sist.presentation.settings.SettingsScreen
+import com.sinop.sist.presentation.settings.LogViewerScreen
 import com.sinop.sist.presentation.transactions.TransactionsScreen
 import com.sinop.sist.presentation.transactions.add.AddTransactionScreen
 
@@ -173,7 +174,31 @@ fun MainNavigation() {
                             putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
                         }
                         context.startActivity(intent)
-                    }
+                    },
+                    onBatteryOptimizationClick = {
+                        val packageName = context.packageName
+                        try {
+                            val intent = android.content.Intent(
+                                android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                            ).apply {
+                                data = android.net.Uri.parse("package:$packageName")
+                            }
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            runCatching {
+                                val fallback = android.content.Intent(
+                                    android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+                                )
+                                context.startActivity(fallback)
+                            }
+                        }
+                    },
+                    onLogsClick = { navController.navigate(Screen.Logs.route) }
+                )
+            }
+            composable(Screen.Logs.route) {
+                LogViewerScreen(
+                    onBackClick = { navController.popBackStack() }
                 )
             }
             composable(Screen.Assets.route) {

@@ -40,6 +40,9 @@ interface TransactionDao {
     @Query("SELECT SUM(amount) FROM transactions WHERE type = :type AND date BETWEEN :start AND :end")
     fun getSumByTypeAndPeriod(type: String, start: LocalDateTime, end: LocalDateTime): Flow<Double?>
 
+    @Query("SELECT SUM(amount) FROM transactions WHERE type = :type AND date < :end")
+    fun getSumByTypeBefore(type: String, end: LocalDateTime): Flow<Double?>
+
     @Query("DELETE FROM transactions WHERE recurringId = :recurringId")
     suspend fun deleteByRecurringId(recurringId: Long)
 

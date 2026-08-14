@@ -8,6 +8,7 @@ data class Transaction(
     val type: TransactionType,
     val categoryId: Long,
     val accountId: Long? = null,
+    val toAccountId: Long? = null,
     val date: LocalDateTime,
     val note: String? = null,
     val tags: List<String> = emptyList(),
@@ -17,6 +18,6 @@ data class Transaction(
     val recurringId: Long? = null
 )
 
-enum class TransactionType { INCOME, EXPENSE }
+enum class TransactionType { INCOME, EXPENSE, TRANSFER }
 
 enum class PaymentMethod { CASH, BANK }

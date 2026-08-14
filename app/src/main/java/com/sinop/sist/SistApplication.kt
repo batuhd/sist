@@ -16,6 +16,8 @@ import com.sinop.sist.data.repository.CategoryRepositoryImpl
 import com.sinop.sist.data.repository.DebtRepositoryImpl
 import com.sinop.sist.data.repository.InstallmentRepositoryImpl
 import com.sinop.sist.data.repository.PriceCacheRepositoryImpl
+import com.sinop.sist.data.repository.PriceAlertRepositoryImpl
+import com.sinop.sist.data.repository.NotificationSettingsRepositoryImpl
 import com.sinop.sist.data.repository.RecurringTransactionRepositoryImpl
 import com.sinop.sist.data.repository.TermsRepositoryImpl
 import com.sinop.sist.data.repository.TransactionRepositoryImpl
@@ -23,6 +25,8 @@ import com.sinop.sist.domain.repository.AccountRepository
 import com.sinop.sist.domain.usecase.RefreshAssetPricesUseCase
 import com.sinop.sist.worker.BudgetCheckWorker
 import com.sinop.sist.worker.MarketCloseNotificationWorker
+import com.sinop.sist.worker.PriceAlertWorker
+import com.sinop.sist.worker.PriceRefreshWorker
 import com.sinop.sist.worker.RecurringTransactionWorker
 import com.sinop.sist.domain.repository.AssetRepository
 import com.sinop.sist.domain.repository.BudgetRepository
@@ -30,6 +34,8 @@ import com.sinop.sist.domain.repository.CategoryRepository
 import com.sinop.sist.domain.repository.DebtRepository
 import com.sinop.sist.domain.repository.InstallmentRepository
 import com.sinop.sist.domain.repository.PriceCacheRepository
+import com.sinop.sist.domain.repository.PriceAlertRepository
+import com.sinop.sist.domain.repository.NotificationSettingsRepository
 import com.sinop.sist.domain.repository.RecurringTransactionRepository
 import com.sinop.sist.domain.repository.TermsRepository
 import com.sinop.sist.domain.repository.TransactionRepository
@@ -45,6 +51,7 @@ class SistApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        com.sinop.sist.util.CrashLogger.install(this)
         container = AppContainer(this)
         scheduleWorkers()
     }
@@ -75,6 +82,8 @@ class SistApplication : Application() {
             )
         }
 
+        PriceAlertWorker.schedule(this)
+        PriceRefreshWorker.schedule(this)
         MarketCloseNotificationWorker.scheduleNext(this)
     }
 
@@ -142,6 +151,14 @@ class AppContainer(private val application: Application) {
 
     val priceCacheRepository: PriceCacheRepository by lazy {
         PriceCacheRepositoryImpl(database.priceCacheDao())
+    }
+
+    val priceAlertRepository: PriceAlertRepository by lazy {
+        PriceAlertRepositoryImpl(database.priceAlertDao())
+    }
+
+    val notificationSettingsRepository: NotificationSettingsRepository by lazy {
+        NotificationSettingsRepositoryImpl(application)
     }
 
     val fvtFundPriceProvider: FvtFundPriceProvider by lazy {

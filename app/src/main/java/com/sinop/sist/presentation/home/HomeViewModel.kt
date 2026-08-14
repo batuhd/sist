@@ -11,6 +11,7 @@ import com.sinop.sist.domain.repository.AccountRepository
 import com.sinop.sist.domain.repository.AssetRepository
 import com.sinop.sist.domain.repository.CategoryRepository
 import com.sinop.sist.domain.repository.TransactionRepository
+import com.sinop.sist.util.periodRange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,21 +38,26 @@ class HomeViewModel(
         }
 
         val month = YearMonth.now()
-        val start = month.atDay(1).atStartOfDay()
-        val end = month.atEndOfMonth().atTime(23, 59, 59)
+        val (start, end) = month.periodRange()
 
         combine(
             transactionRepository.getSumByTypeAndPeriod(TransactionType.INCOME, start, end),
             transactionRepository.getSumByTypeAndPeriod(TransactionType.EXPENSE, start, end),
-            transactionRepository.getBetween(start, end),
+            transactionRepository.getAll(),
             accountRepository.getAll(),
             assetRepository.getPortfolioSummary()
         ) { income, expense, transactions, accounts, portfolio ->
             val visibleAccounts = accounts.filter { it.type != AccountType.INVESTMENT }
             val accountBalances = visibleAccounts.map { account ->
-                val balance = transactions
-                    .filter { it.accountId == account.id }
-                    .sumOf { if (it.type == TransactionType.INCOME) it.amount else -it.amount }
+                val balance = transactions.sumOf { transaction ->
+                    when {
+                        transaction.type == TransactionType.TRANSFER && transaction.accountId == account.id -> -transaction.amount
+                        transaction.type == TransactionType.TRANSFER && transaction.toAccountId == account.id -> transaction.amount
+                        transaction.type == TransactionType.INCOME && transaction.accountId == account.id -> transaction.amount
+                        transaction.type == TransactionType.EXPENSE && transaction.accountId == account.id -> -transaction.amount
+                        else -> 0.0
+                    }
+                }
                 account.copy(balance = balance)
             }
             val portfolioValue = portfolio.totalValue ?: 0.0

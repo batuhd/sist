@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.sinop.sist.domain.model.AccountType
@@ -28,6 +29,7 @@ fun getCategoryIcon(iconName: String?): ImageVector {
         "trending_up" -> Icons.AutoMirrored.Filled.TrendingUp
         "attach_money" -> Icons.Default.AttachMoney
         "money_off" -> Icons.Default.MoneyOff
+        "swap_horiz" -> Icons.Default.SwapHoriz
         else -> Icons.Default.Category
     }
 }

@@ -20,11 +20,20 @@ class BudgetCheckWorker(
         val repository = app.container.budgetRepository
 
         checkBudgets(repository, applicationContext)
+
+        // Watchdog: bildirim zincirlerinin kopmamasını garanti et.
+        try {
+            MarketCloseNotificationWorker.ensureScheduled(applicationContext)
+        } catch (e: Exception) {
+            android.util.Log.w(TAG, "Market kapanış watchdog hatası", e)
+        }
+
         return Result.success()
     }
 
     companion object {
         const val WORK_NAME = "budget_check_worker"
+        private const val TAG = "BudgetCheckWorker"
 
         suspend fun checkBudgets(repository: BudgetRepository, context: Context) {
             val month = YearMonth.now()

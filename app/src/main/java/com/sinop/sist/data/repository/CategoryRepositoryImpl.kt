@@ -50,20 +50,36 @@ class CategoryRepositoryImpl(
             Category(name = "Borç/Taksit", iconName = "receipt", colorHex = "#607D8B", type = CategoryType.EXPENSE, isDefault = true),
             Category(name = "Borç Geri Alma", iconName = "attach_money", colorHex = "#009688", type = CategoryType.INCOME, isDefault = true),
             Category(name = "Diğer Gelir", iconName = "attach_money", colorHex = "#8BC34A", type = CategoryType.INCOME, isDefault = true),
-            Category(name = "Diğer Gider", iconName = "money_off", colorHex = "#795548", type = CategoryType.EXPENSE, isDefault = true)
+            Category(name = "Diğer Gider", iconName = "money_off", colorHex = "#795548", type = CategoryType.EXPENSE, isDefault = true),
+            Category(name = "Transfer", iconName = "swap_horiz", colorHex = "#1565C0", type = CategoryType.TRANSFER, isDefault = true)
         )
 
         val existing = categoryDao.getAll().first().map { it.toDomain() }
-        val existingNames = existing.map { it.name }.toSet()
+        val existingByName = existing.associateBy { it.name }
         val inserted = mutableListOf<Category>()
+        val updated = mutableListOf<Category>()
 
         defaults.forEach { default ->
-            if (default.name !in existingNames) {
+            val current = existingByName[default.name]
+            if (current == null) {
                 val newId = categoryDao.insert(default.toEntity())
                 inserted.add(default.copy(id = newId))
+            } else if (current.type != default.type) {
+                val fixed = current.copy(type = default.type)
+                categoryDao.update(fixed.toEntity())
+                updated.add(fixed)
             }
         }
 
-        return existing + inserted
+        val merged = existing.map { existingAccount ->
+            updated.find { it.id == existingAccount.id } ?: existingAccount
+        } + inserted
+
+        return merged
     }
+
+    override suspend fun getTransferCategoryId(): Long? =
+        categoryDao.getAll().first()
+            .firstOrNull { it.name == "Transfer" && it.type == "transfer" }
+            ?.id
 }

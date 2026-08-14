@@ -42,7 +42,9 @@ import androidx.compose.ui.unit.dp
 fun SettingsScreen(
     onCategoriesClick: () -> Unit = {},
     onRecurringClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {}
+    onNotificationsClick: () -> Unit = {},
+    onBatteryOptimizationClick: () -> Unit = {},
+    onLogsClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -95,6 +97,27 @@ fun SettingsScreen(
                 title = "Sistem Bildirim Ayarları",
                 subtitle = "Bildirim izinlerini yönet",
                 onClick = onNotificationsClick
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            SettingsItem(
+                icon = Icons.Default.Notifications,
+                title = "Bildirim Güvenilirliği",
+                subtitle = "Pil optimizasyonu istisnası ile bildirimlerin kesilmesini önle",
+                onClick = onBatteryOptimizationClick
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = "Gelişmiş",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            SettingsItem(
+                icon = Icons.Default.Notifications,
+                title = "Hata Günlükleri",
+                subtitle = "Uygulama içi kayıtları görüntüle ve paylaş",
+                onClick = onLogsClick
             )
         }
     }

@@ -135,6 +135,11 @@ fun TransactionsScreen(
                 balance = state.balance
             )
 
+            CarryOverBalanceCard(
+                carryOverBalance = state.carryOverBalance,
+                monthEndBalance = state.monthEndBalance
+            )
+
             ControlBar(
                 viewMode = state.viewMode,
                 sortOrder = state.sortOrder,
@@ -174,6 +179,49 @@ fun TransactionsScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CarryOverBalanceCard(
+    carryOverBalance: Double,
+    monthEndBalance: Double
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Devreden Bakiye",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = carryOverBalance.formatCurrency(),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = if (carryOverBalance >= 0) MaterialTheme.colorScheme.onSurface else ExpenseRed
+        )
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Ay Sonu Bakiye",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = monthEndBalance.formatCurrency(),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = if (monthEndBalance >= 0) MaterialTheme.colorScheme.onSurface else ExpenseRed
+        )
     }
 }
 
