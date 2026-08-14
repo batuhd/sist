@@ -211,9 +211,11 @@ fun MainNavigation() {
                     onAssetClick = { id -> navController.navigate(Screen.AssetDetail.createRoute(id)) }
                 )
             }
-            composable(Screen.AddAsset.route) {
+            composable(Screen.AddAsset.route) { backStackEntry ->
+                val assetId = backStackEntry.arguments?.getString("assetId")?.toLongOrNull()
                 AddAssetScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    assetId = assetId
                 )
             }
             composable(Screen.AssetDetail.route) { backStackEntry ->
