@@ -460,8 +460,10 @@ private fun CategoryChip(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val color = category.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = category.colorHex
+    val color = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val iconColor = if (color.luminance() > 0.5f) Color.Black else Color.White
     val backgroundColor = if (selected) color else color.copy(alpha = 0.12f)
     val contentColor = if (selected) iconColor else color

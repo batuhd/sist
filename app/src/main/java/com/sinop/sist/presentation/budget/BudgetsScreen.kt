@@ -288,8 +288,10 @@ private fun CategoryBudgetCard(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val color = category?.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primary
+    val colorHex = category?.colorHex
+    val color = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primary
     val iconBackground = color.copy(alpha = 0.12f)
     val iconTint = if (color.luminance() > 0.5f) Color.Black else Color.White
     BudgetCard(

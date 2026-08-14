@@ -194,8 +194,10 @@ private fun RecurringItem(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val categoryColor = category?.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primary
+    val colorHex = category?.colorHex
+    val categoryColor = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primary
     val iconBackground = categoryColor.copy(alpha = 0.12f)
     val iconTint = if (categoryColor.luminance() > 0.5f) Color.Black else Color.White
     val amountColor = if (recurring.type == TransactionType.INCOME) LocalSistColors.current.positive else LocalSistColors.current.negative

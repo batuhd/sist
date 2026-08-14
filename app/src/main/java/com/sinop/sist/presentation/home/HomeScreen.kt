@@ -349,8 +349,10 @@ private fun AccountRow(
     account: Account,
     onLongClick: (() -> Unit)? = null
 ) {
-    val backgroundColor = account.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = account.colorHex
+    val backgroundColor = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val contentColor = if (backgroundColor.luminance() > 0.5f) Color.Black else Color.White
 
     Row(

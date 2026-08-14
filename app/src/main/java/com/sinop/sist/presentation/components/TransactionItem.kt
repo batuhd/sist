@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -141,8 +142,10 @@ fun TransactionItem(
 
 @Composable
 fun CategoryIcon(category: Category?, modifier: Modifier = Modifier) {
-    val backgroundColor = category?.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = category?.colorHex
+    val backgroundColor = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val contentColor = if (backgroundColor.luminance() > 0.5f) Color.Black else Color.White
 
     Box(

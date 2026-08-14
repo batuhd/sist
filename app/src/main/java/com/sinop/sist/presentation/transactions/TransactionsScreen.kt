@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -127,59 +129,72 @@ fun TransactionsScreen(
             }
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
         ) {
-            SummaryCards(
-                income = state.totalIncome,
-                expense = state.totalExpense,
-                balance = state.balance
-            )
+            item(key = "summary") {
+                SummaryCards(
+                    income = state.totalIncome,
+                    expense = state.totalExpense,
+                    balance = state.balance
+                )
+            }
 
-            CarryOverBalanceCard(
-                carryOverBalance = state.carryOverBalance,
-                monthEndBalance = state.monthEndBalance
-            )
+            item(key = "carryover") {
+                CarryOverBalanceCard(
+                    carryOverBalance = state.carryOverBalance,
+                    monthEndBalance = state.monthEndBalance
+                )
+            }
 
-            ControlBar(
-                viewMode = state.viewMode,
-                sortOrder = state.sortOrder,
-                onViewModeChange = { viewModel.setViewMode(it) },
-                onSortChange = { viewModel.setSortOrder(it) },
-                sortMenuExpanded = sortMenuExpanded,
-                onSortMenuExpandedChange = { sortMenuExpanded = it }
-            )
+            item(key = "controls") {
+                ControlBar(
+                    viewMode = state.viewMode,
+                    sortOrder = state.sortOrder,
+                    onViewModeChange = { viewModel.setViewMode(it) },
+                    onSortChange = { viewModel.setSortOrder(it) },
+                    sortMenuExpanded = sortMenuExpanded,
+                    onSortMenuExpandedChange = { sortMenuExpanded = it }
+                )
+            }
 
             when (state.viewMode) {
                 TransactionViewMode.LIST -> {
                     if (state.transactions.isEmpty()) {
-                        EmptyState(
-                            icon = Icons.Default.Category,
-                            title = "Henüz işlem yok",
-                            subtitle = "İlk gelir veya giderini eklemek için + butonuna dokun"
-                        )
-                    } else {
-                        Column {
-                            state.transactions.forEach { transaction ->
-                                TransactionItem(
-                                    transaction = transaction,
-                                    category = state.categories.find { it.id == transaction.categoryId },
-                                    onEdit = { onEditClick(transaction.id) },
-                                    onDelete = { viewModel.deleteTransaction(transaction) }
+                        item(key = "empty") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(360.dp)
+                            ) {
+                                EmptyState(
+                                    icon = Icons.Default.Category,
+                                    title = "Henüz işlem yok",
+                                    subtitle = "İlk gelir veya giderini eklemek için + butonuna dokun"
                                 )
                             }
+                        }
+                    } else {
+                        items(state.transactions, key = { it.id }) { transaction ->
+                            TransactionItem(
+                                transaction = transaction,
+                                category = state.categories.find { it.id == transaction.categoryId },
+                                onEdit = { onEditClick(transaction.id) },
+                                onDelete = { viewModel.deleteTransaction(transaction) }
+                            )
                         }
                     }
                 }
                 TransactionViewMode.CHART -> {
-                    ChartContent(
-                        income = state.totalIncome,
-                        expense = state.totalExpense,
-                        expensesByCategory = state.expensesByCategory
-                    )
+                    item(key = "chart") {
+                        ChartContent(
+                            income = state.totalIncome,
+                            expense = state.totalExpense,
+                            expensesByCategory = state.expensesByCategory
+                        )
+                    }
                 }
             }
         }
@@ -421,7 +436,9 @@ private fun ExpensePieChart(
     modifier: Modifier = Modifier
 ) {
     val total = expensesByCategory.sumOf { it.amount }.toFloat().coerceAtLeast(1f)
-    val colors = expensesByCategory.map { Color(android.graphics.Color.parseColor(it.category.colorHex)) }
+    val colors = remember(expensesByCategory) {
+        expensesByCategory.map { Color(android.graphics.Color.parseColor(it.category.colorHex)) }
+    }
     val proportions = expensesByCategory.map { (it.amount.toFloat() / total).coerceIn(0f, 1f) }
     val fallbackColor = MaterialTheme.colorScheme.primary
 
@@ -484,7 +501,10 @@ private fun ExpenseLegend(expensesByCategory: List<CategoryExpense>) {
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         expensesByCategory.forEach { item ->
-            val backgroundColor = Color(android.graphics.Color.parseColor(item.category.colorHex))
+            val categoryColorHex = item.category.colorHex
+            val backgroundColor = remember(categoryColorHex) {
+                Color(android.graphics.Color.parseColor(categoryColorHex))
+            }
             val percent = ((item.amount / total) * 100).toInt()
 
             Row(
