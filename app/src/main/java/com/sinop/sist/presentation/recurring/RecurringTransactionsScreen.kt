@@ -1,5 +1,7 @@
 package com.sinop.sist.presentation.recurring
 
+import com.sinop.sist.ui.theme.SistRadius
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,8 +66,7 @@ import com.sinop.sist.domain.model.CategoryType
 import com.sinop.sist.domain.model.RecurringTransaction
 import com.sinop.sist.domain.model.RecurrencePeriod
 import com.sinop.sist.domain.model.TransactionType
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
+import com.sinop.sist.ui.theme.LocalSistColors
 import com.sinop.sist.util.formatCurrency
 import com.sinop.sist.util.getCategoryIcon
 import java.time.LocalDate
@@ -197,12 +198,12 @@ private fun RecurringItem(
         ?: MaterialTheme.colorScheme.primary
     val iconBackground = categoryColor.copy(alpha = 0.12f)
     val iconTint = if (categoryColor.luminance() > 0.5f) Color.Black else Color.White
-    val amountColor = if (recurring.type == TransactionType.INCOME) IncomeGreen else ExpenseRed
+    val amountColor = if (recurring.type == TransactionType.INCOME) LocalSistColors.current.positive else LocalSistColors.current.negative
 
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -214,7 +215,7 @@ private fun RecurringItem(
             Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(RoundedCornerShape(14.dp))
+                    .clip(RoundedCornerShape(SistRadius.md))
                     .background(iconBackground),
                 contentAlignment = Alignment.Center
             ) {
@@ -314,7 +315,7 @@ private fun AddRecurringDialog(
                     onValueChange = { title = it },
                     label = { Text("Başlık") },
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(SistRadius.md),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -323,7 +324,7 @@ private fun AddRecurringDialog(
                     onValueChange = { amountText = it },
                     label = { Text("Tutar") },
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(SistRadius.md),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -411,7 +412,7 @@ private fun AddRecurringDialog(
                     label = { Text("Başlangıç tarihi (YYYY-AA-GG)") },
                     readOnly = true,
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(SistRadius.md),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -458,7 +459,7 @@ private fun FilterChip(
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(SistRadius.md))
             .background(
                 if (selected) MaterialTheme.colorScheme.primaryContainer
                 else MaterialTheme.colorScheme.surfaceVariant

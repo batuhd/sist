@@ -1,5 +1,7 @@
 package com.sinop.sist.presentation.terms
 
+import com.sinop.sist.ui.theme.SistRadius
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize

@@ -63,6 +63,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sinop.sist.domain.model.Category
 import com.sinop.sist.domain.model.CategoryType
 import com.sinop.sist.presentation.components.SistTopBar
+import com.sinop.sist.ui.theme.SistRadius
 import com.sinop.sist.util.getCategoryIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -123,7 +124,7 @@ private fun CategoryListItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -249,7 +250,7 @@ private fun AddCategoryDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Kategori adı") },
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(SistRadius.md),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -365,7 +366,7 @@ private fun IconOption(
     Box(
         modifier = Modifier
             .size(44.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(SistRadius.md))
             .background(backgroundColor)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
@@ -390,7 +391,7 @@ private fun ColorOption(
     Card(
         onClick = onClick,
         modifier = Modifier.size(44.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(SistRadius.md),
         colors = CardDefaults.cardColors(containerColor = color),
         border = if (selected) {
             androidx.compose.foundation.BorderStroke(3.dp, borderColor)
