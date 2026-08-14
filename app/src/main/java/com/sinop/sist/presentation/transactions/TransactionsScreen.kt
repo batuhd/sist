@@ -28,11 +28,14 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,8 +65,9 @@ import com.sinop.sist.presentation.components.EmptyState
 import com.sinop.sist.presentation.components.SistTopBar
 import com.sinop.sist.presentation.components.SummaryCards
 import com.sinop.sist.presentation.components.TransactionItem
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -117,7 +121,7 @@ fun TransactionsScreen(
                 onClick = onAddClick,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Ekle")
             }
@@ -187,41 +191,52 @@ private fun CarryOverBalanceCard(
     carryOverBalance: Double,
     monthEndBalance: Double
 ) {
-    Row(
+    val sistColors = LocalSistColors.current
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
-        Text(
-            text = "Devreden Bakiye",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = carryOverBalance.formatCurrency(),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = if (carryOverBalance >= 0) MaterialTheme.colorScheme.onSurface else ExpenseRed
-        )
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = "Ay Sonu Bakiye",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = monthEndBalance.formatCurrency(),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = if (monthEndBalance >= 0) MaterialTheme.colorScheme.onSurface else ExpenseRed
-        )
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Devreden Bakiye",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = carryOverBalance.formatCurrency(),
+                    style = SistTypography.amountTitle,
+                    color = if (carryOverBalance >= 0) MaterialTheme.colorScheme.onSurface else sistColors.negative
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Ay Sonu Bakiye",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = monthEndBalance.formatCurrency(),
+                    style = SistTypography.amountTitle,
+                    color = if (monthEndBalance >= 0) MaterialTheme.colorScheme.onSurface else sistColors.negative
+                )
+            }
+        }
     }
 }
 
@@ -358,19 +373,20 @@ private fun IncomeExpenseBarChart(
     val maxValue = maxOf(income, expense, 1.0)
     val incomeRatio = (income / maxValue).toFloat().coerceIn(0f, 1f)
     val expenseRatio = (expense / maxValue).toFloat().coerceIn(0f, 1f)
+    val sistColors = LocalSistColors.current
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(160.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(SistRadius.lg))
             .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.Bottom
     ) {
-        BarColumn(label = "Gelir", amount = income, ratio = incomeRatio, color = IncomeGreen)
-        BarColumn(label = "Gider", amount = expense, ratio = expenseRatio, color = ExpenseRed)
+        BarColumn(label = "Gelir", amount = income, ratio = incomeRatio, color = sistColors.positive)
+        BarColumn(label = "Gider", amount = expense, ratio = expenseRatio, color = sistColors.negative)
     }
 }
 
@@ -379,8 +395,7 @@ private fun BarColumn(label: String, amount: Double, ratio: Float, color: Color)
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = amount.formatCurrency(),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
+            style = SistTypography.amountSmall,
             color = color
         )
         Spacer(modifier = Modifier.height(6.dp))
