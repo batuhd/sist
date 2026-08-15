@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +44,7 @@ import com.sinop.sist.ui.theme.SistTypography
 fun SettingsScreen(
     onCategoriesClick: () -> Unit = {},
     onRecurringClick: () -> Unit = {},
+    onWidgetsClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onBatteryOptimizationClick: () -> Unit = {},
     onLogsClick: () -> Unit = {}
@@ -79,6 +81,13 @@ fun SettingsScreen(
                 title = "Tekrarlayan İşlemler",
                 subtitle = "Düzenli gelir ve giderleri ayarla",
                 onClick = onRecurringClick
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            SettingsItem(
+                icon = Icons.Default.Widgets,
+                title = "Widget Ayarları",
+                subtitle = "Tüm widget'ların renk ve yazı boyutunu ayarla",
+                onClick = onWidgetsClick
             )
 
             Spacer(modifier = Modifier.height(24.dp))
