@@ -63,6 +63,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sinop.sist.domain.model.Category
 import com.sinop.sist.domain.model.CategoryType
 import com.sinop.sist.presentation.components.SistTopBar
+import com.sinop.sist.ui.theme.SistRadius
 import com.sinop.sist.util.getCategoryIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,15 +116,17 @@ private fun CategoryListItem(
     category: Category,
     onDelete: () -> Unit
 ) {
-    val color = category.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = category.colorHex
+    val color = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val iconColor = if (color.luminance() > 0.5f) Color.Black else Color.White
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -249,7 +252,7 @@ private fun AddCategoryDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Kategori adı") },
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(SistRadius.md),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -365,7 +368,7 @@ private fun IconOption(
     Box(
         modifier = Modifier
             .size(44.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(SistRadius.md))
             .background(backgroundColor)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
@@ -385,12 +388,12 @@ private fun ColorOption(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val color = Color(android.graphics.Color.parseColor(hex))
+    val color = remember(hex) { Color(android.graphics.Color.parseColor(hex)) }
     val borderColor = if (selected) MaterialTheme.colorScheme.onSurface else androidx.compose.ui.graphics.Color.Transparent
     Card(
         onClick = onClick,
         modifier = Modifier.size(44.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(SistRadius.md),
         colors = CardDefaults.cardColors(containerColor = color),
         border = if (selected) {
             androidx.compose.foundation.BorderStroke(3.dp, borderColor)

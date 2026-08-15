@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,11 +30,14 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,8 +67,9 @@ import com.sinop.sist.presentation.components.EmptyState
 import com.sinop.sist.presentation.components.SistTopBar
 import com.sinop.sist.presentation.components.SummaryCards
 import com.sinop.sist.presentation.components.TransactionItem
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -117,65 +123,78 @@ fun TransactionsScreen(
                 onClick = onAddClick,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Ekle")
             }
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
         ) {
-            SummaryCards(
-                income = state.totalIncome,
-                expense = state.totalExpense,
-                balance = state.balance
-            )
+            item(key = "summary") {
+                SummaryCards(
+                    income = state.totalIncome,
+                    expense = state.totalExpense,
+                    balance = state.balance
+                )
+            }
 
-            CarryOverBalanceCard(
-                carryOverBalance = state.carryOverBalance,
-                monthEndBalance = state.monthEndBalance
-            )
+            item(key = "carryover") {
+                CarryOverBalanceCard(
+                    carryOverBalance = state.carryOverBalance,
+                    monthEndBalance = state.monthEndBalance
+                )
+            }
 
-            ControlBar(
-                viewMode = state.viewMode,
-                sortOrder = state.sortOrder,
-                onViewModeChange = { viewModel.setViewMode(it) },
-                onSortChange = { viewModel.setSortOrder(it) },
-                sortMenuExpanded = sortMenuExpanded,
-                onSortMenuExpandedChange = { sortMenuExpanded = it }
-            )
+            item(key = "controls") {
+                ControlBar(
+                    viewMode = state.viewMode,
+                    sortOrder = state.sortOrder,
+                    onViewModeChange = { viewModel.setViewMode(it) },
+                    onSortChange = { viewModel.setSortOrder(it) },
+                    sortMenuExpanded = sortMenuExpanded,
+                    onSortMenuExpandedChange = { sortMenuExpanded = it }
+                )
+            }
 
             when (state.viewMode) {
                 TransactionViewMode.LIST -> {
                     if (state.transactions.isEmpty()) {
-                        EmptyState(
-                            icon = Icons.Default.Category,
-                            title = "Henüz işlem yok",
-                            subtitle = "İlk gelir veya giderini eklemek için + butonuna dokun"
-                        )
-                    } else {
-                        Column {
-                            state.transactions.forEach { transaction ->
-                                TransactionItem(
-                                    transaction = transaction,
-                                    category = state.categories.find { it.id == transaction.categoryId },
-                                    onEdit = { onEditClick(transaction.id) },
-                                    onDelete = { viewModel.deleteTransaction(transaction) }
+                        item(key = "empty") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(360.dp)
+                            ) {
+                                EmptyState(
+                                    icon = Icons.Default.Category,
+                                    title = "Henüz işlem yok",
+                                    subtitle = "İlk gelir veya giderini eklemek için + butonuna dokun"
                                 )
                             }
+                        }
+                    } else {
+                        items(state.transactions, key = { it.id }) { transaction ->
+                            TransactionItem(
+                                transaction = transaction,
+                                category = state.categories.find { it.id == transaction.categoryId },
+                                onEdit = { onEditClick(transaction.id) },
+                                onDelete = { viewModel.deleteTransaction(transaction) }
+                            )
                         }
                     }
                 }
                 TransactionViewMode.CHART -> {
-                    ChartContent(
-                        income = state.totalIncome,
-                        expense = state.totalExpense,
-                        expensesByCategory = state.expensesByCategory
-                    )
+                    item(key = "chart") {
+                        ChartContent(
+                            income = state.totalIncome,
+                            expense = state.totalExpense,
+                            expensesByCategory = state.expensesByCategory
+                        )
+                    }
                 }
             }
         }
@@ -187,41 +206,52 @@ private fun CarryOverBalanceCard(
     carryOverBalance: Double,
     monthEndBalance: Double
 ) {
-    Row(
+    val sistColors = LocalSistColors.current
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
-        Text(
-            text = "Devreden Bakiye",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = carryOverBalance.formatCurrency(),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = if (carryOverBalance >= 0) MaterialTheme.colorScheme.onSurface else ExpenseRed
-        )
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = "Ay Sonu Bakiye",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = monthEndBalance.formatCurrency(),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = if (monthEndBalance >= 0) MaterialTheme.colorScheme.onSurface else ExpenseRed
-        )
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Devreden Bakiye",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = carryOverBalance.formatCurrency(),
+                    style = SistTypography.amountTitle,
+                    color = if (carryOverBalance >= 0) MaterialTheme.colorScheme.onSurface else sistColors.negative
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Ay Sonu Bakiye",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = monthEndBalance.formatCurrency(),
+                    style = SistTypography.amountTitle,
+                    color = if (monthEndBalance >= 0) MaterialTheme.colorScheme.onSurface else sistColors.negative
+                )
+            }
+        }
     }
 }
 
@@ -358,19 +388,20 @@ private fun IncomeExpenseBarChart(
     val maxValue = maxOf(income, expense, 1.0)
     val incomeRatio = (income / maxValue).toFloat().coerceIn(0f, 1f)
     val expenseRatio = (expense / maxValue).toFloat().coerceIn(0f, 1f)
+    val sistColors = LocalSistColors.current
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(160.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(SistRadius.lg))
             .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.Bottom
     ) {
-        BarColumn(label = "Gelir", amount = income, ratio = incomeRatio, color = IncomeGreen)
-        BarColumn(label = "Gider", amount = expense, ratio = expenseRatio, color = ExpenseRed)
+        BarColumn(label = "Gelir", amount = income, ratio = incomeRatio, color = sistColors.positive)
+        BarColumn(label = "Gider", amount = expense, ratio = expenseRatio, color = sistColors.negative)
     }
 }
 
@@ -379,8 +410,7 @@ private fun BarColumn(label: String, amount: Double, ratio: Float, color: Color)
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = amount.formatCurrency(),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
+            style = SistTypography.amountSmall,
             color = color
         )
         Spacer(modifier = Modifier.height(6.dp))
@@ -406,7 +436,9 @@ private fun ExpensePieChart(
     modifier: Modifier = Modifier
 ) {
     val total = expensesByCategory.sumOf { it.amount }.toFloat().coerceAtLeast(1f)
-    val colors = expensesByCategory.map { Color(android.graphics.Color.parseColor(it.category.colorHex)) }
+    val colors = remember(expensesByCategory) {
+        expensesByCategory.map { Color(android.graphics.Color.parseColor(it.category.colorHex)) }
+    }
     val proportions = expensesByCategory.map { (it.amount.toFloat() / total).coerceIn(0f, 1f) }
     val fallbackColor = MaterialTheme.colorScheme.primary
 
@@ -469,7 +501,10 @@ private fun ExpenseLegend(expensesByCategory: List<CategoryExpense>) {
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         expensesByCategory.forEach { item ->
-            val backgroundColor = Color(android.graphics.Color.parseColor(item.category.colorHex))
+            val categoryColorHex = item.category.colorHex
+            val backgroundColor = remember(categoryColorHex) {
+                Color(android.graphics.Color.parseColor(categoryColorHex))
+            }
             val percent = ((item.amount / total) * 100).toInt()
 
             Row(

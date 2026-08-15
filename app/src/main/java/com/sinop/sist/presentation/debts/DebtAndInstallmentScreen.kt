@@ -71,6 +71,8 @@ import com.sinop.sist.domain.model.DebtDirection
 import com.sinop.sist.domain.model.Installment
 import com.sinop.sist.presentation.components.EmptyState
 import com.sinop.sist.presentation.components.SistTopBar
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
 import com.sinop.sist.presentation.installments.InstallmentViewModel
 import com.sinop.sist.util.formatCurrency
 import com.sinop.sist.util.formatShort
@@ -289,15 +291,15 @@ private fun DebtItem(
 ) {
     val isGiven = debt.direction == DebtDirection.GIVEN
     val icon = if (isGiven) Icons.AutoMirrored.Filled.ArrowForward else Icons.AutoMirrored.Filled.ArrowBack
-    val iconBg = if (isGiven) Color(0xFFFFE8E8) else Color(0xFFE6F9F3)
-    val iconColor = if (isGiven) Color(0xFFEF4444) else Color(0xFF00A884)
+    val iconBg = if (isGiven) LocalSistColors.current.negativeContainer else LocalSistColors.current.positiveContainer
+    val iconColor = if (isGiven) LocalSistColors.current.negative else LocalSistColors.current.positive
     val title = if (isGiven) "${debt.personName} (Verilen)" else "${debt.personName} (Alınan)"
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -338,7 +340,7 @@ private fun DebtItem(
                         Text(
                             text = "Ödendi",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF00A884)
+                            color = LocalSistColors.current.positive
                         )
                     }
                 }
@@ -352,19 +354,19 @@ private fun DebtItem(
                     text = debt.amount.formatCurrency(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = if (isGiven) Color(0xFFEF4444) else Color(0xFF00A884)
+                    color = if (isGiven) LocalSistColors.current.negative else LocalSistColors.current.positive
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (!debt.isPaid) {
                         ActionButton(
                             text = "Öde",
-                            color = Color(0xFF00A884),
+                            color = LocalSistColors.current.positive,
                             onClick = onPay
                         )
                     }
                     ActionButton(
                         text = "Sil",
-                        color = Color(0xFFEF4444),
+                        color = LocalSistColors.current.negative,
                         onClick = onDelete
                     )
                 }
@@ -383,7 +385,7 @@ private fun InstallmentItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -401,10 +403,10 @@ private fun InstallmentItem(
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFFF3E0)),
+                        .background(LocalSistColors.current.categoryOrangeContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Default.CreditCard, contentDescription = null, tint = Color(0xFFFF9800), modifier = Modifier.size(24.dp))
+                    Icon(Icons.Default.CreditCard, contentDescription = null, tint = LocalSistColors.current.categoryOrange, modifier = Modifier.size(24.dp))
                 }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -436,19 +438,19 @@ private fun InstallmentItem(
                     text = installment.monthlyAmount.formatCurrency(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF9800)
+                    color = LocalSistColors.current.categoryOrange
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (!installment.isCompleted) {
                         ActionButton(
                             text = "Öde",
-                            color = Color(0xFF00A884),
+                            color = LocalSistColors.current.positive,
                             onClick = onPay
                         )
                     }
                     ActionButton(
                         text = "Sil",
-                        color = Color(0xFFEF4444),
+                        color = LocalSistColors.current.negative,
                         onClick = onDelete
                     )
                 }

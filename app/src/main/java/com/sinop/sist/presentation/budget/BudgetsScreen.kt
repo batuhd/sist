@@ -62,10 +62,8 @@ import com.sinop.sist.domain.model.Budget
 import com.sinop.sist.domain.model.BudgetWithSpending
 import com.sinop.sist.domain.model.Category
 import com.sinop.sist.presentation.components.SistTopBar
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
-import com.sinop.sist.ui.theme.IncomeGreenLight
-import com.sinop.sist.ui.theme.Primary100
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
 import com.sinop.sist.util.formatCurrency
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -226,8 +224,8 @@ private fun GeneralBudgetCard(
     BudgetCard(
         title = "Genel Aylık Bütçe",
         icon = Icons.Default.Savings,
-        iconTint = IncomeGreen,
-        iconBackground = IncomeGreenLight,
+        iconTint = LocalSistColors.current.gold,
+        iconBackground = LocalSistColors.current.goldContainer,
         budget = budget,
         onClick = onClick,
         showDelete = false
@@ -243,7 +241,7 @@ private fun EmptyBudgetCard(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(SistRadius.xl),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -256,13 +254,13 @@ private fun EmptyBudgetCard(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(IncomeGreenLight),
+                    .background(LocalSistColors.current.goldContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Savings,
                     contentDescription = null,
-                    tint = IncomeGreen,
+                    tint = LocalSistColors.current.gold,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -290,8 +288,10 @@ private fun CategoryBudgetCard(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val color = category?.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primary
+    val colorHex = category?.colorHex
+    val color = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primary
     val iconBackground = color.copy(alpha = 0.12f)
     val iconTint = if (color.luminance() > 0.5f) Color.Black else Color.White
     BudgetCard(
@@ -318,15 +318,15 @@ private fun BudgetCard(
     showDelete: Boolean
 ) {
     val progressColor = when {
-        budget.percentage < 0.5f -> Primary100
-        budget.percentage < 0.85f -> MaterialTheme.colorScheme.tertiary
-        else -> ExpenseRed
+        budget.percentage < 0.5f -> LocalSistColors.current.positive
+        budget.percentage < 0.85f -> LocalSistColors.current.gold
+        else -> LocalSistColors.current.negative
     }
 
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(SistRadius.xl),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -370,7 +370,7 @@ private fun BudgetCard(
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = "Sil",
-                                tint = MaterialTheme.colorScheme.error,
+                                tint = LocalSistColors.current.negative,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -402,7 +402,7 @@ private fun BudgetCard(
                     text = "Kalan: ${budget.remaining.formatCurrency()}",
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
-                    color = if (budget.remaining < 0) ExpenseRed else Primary100
+                    color = if (budget.remaining < 0) LocalSistColors.current.negative else MaterialTheme.colorScheme.onSurface
                 )
             }
         }

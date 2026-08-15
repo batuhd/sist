@@ -62,10 +62,9 @@ import com.sinop.sist.domain.model.CategoryType
 import com.sinop.sist.domain.model.PaymentMethod
 import com.sinop.sist.domain.model.TransactionType
 import com.sinop.sist.presentation.components.SistTopBar
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.ExpenseRedLight
-import com.sinop.sist.ui.theme.IncomeGreen
-import com.sinop.sist.ui.theme.IncomeGreenLight
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.getCategoryIcon
 import java.time.Instant
 import java.time.LocalDate
@@ -121,16 +120,16 @@ fun AddTransactionScreen(
                     label = "Gelir",
                     selected = state.type == TransactionType.INCOME,
                     onClick = { viewModel.onTypeChange(TransactionType.INCOME) },
-                    color = IncomeGreen,
-                    lightColor = IncomeGreenLight,
+                    color = LocalSistColors.current.positive,
+                    lightColor = LocalSistColors.current.positiveContainer,
                     modifier = Modifier.weight(1f)
                 )
                 TypeCard(
                     label = "Gider",
                     selected = state.type == TransactionType.EXPENSE,
                     onClick = { viewModel.onTypeChange(TransactionType.EXPENSE) },
-                    color = ExpenseRed,
-                    lightColor = ExpenseRedLight,
+                    color = LocalSistColors.current.negative,
+                    lightColor = LocalSistColors.current.negativeContainer,
                     modifier = Modifier.weight(1f)
                 )
                 TypeCard(
@@ -161,16 +160,13 @@ fun AddTransactionScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    textStyle = MaterialTheme.typography.displaySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start
-                    ),
-                    shape = RoundedCornerShape(20.dp),
+                    textStyle = SistTypography.amountDisplay,
+                    shape = RoundedCornerShape(SistRadius.lg),
                     leadingIcon = {
                         Text(
                             text = "₺",
                             style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = LocalSistColors.current.gold,
                             modifier = Modifier.padding(start = 16.dp)
                         )
                     }
@@ -234,7 +230,7 @@ fun AddTransactionScreen(
                 label = { Text("Tarih") },
                 readOnly = true,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.DateRange, contentDescription = "Tarih seç")
@@ -307,7 +303,7 @@ fun AddTransactionScreen(
                 onValueChange = { viewModel.onNoteChange(it) },
                 label = { Text("Not (opsiyonel)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             )
 
             // Tags
@@ -316,7 +312,7 @@ fun AddTransactionScreen(
                 onValueChange = { viewModel.onTagsChange(it) },
                 label = { Text("Etiketler (virgülle ayırın)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             )
 
             state.error?.let {
@@ -334,7 +330,7 @@ fun AddTransactionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Text(
                     text = if (state.isEditing) "Güncelle" else "Kaydet",
@@ -421,12 +417,14 @@ private fun TypeCard(
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (selected) color else lightColor
-    val contentColor = if (selected) Color.White else color
+    val contentColor = if (selected) {
+        if (color.luminance() > 0.5f) Color.Black else Color.White
+    } else color
 
     Card(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Box(
@@ -462,15 +460,17 @@ private fun CategoryChip(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val color = category.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = category.colorHex
+    val color = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val iconColor = if (color.luminance() > 0.5f) Color.Black else Color.White
     val backgroundColor = if (selected) color else color.copy(alpha = 0.12f)
     val contentColor = if (selected) iconColor else color
 
     Card(
         onClick = onClick,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(SistRadius.md),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Row(

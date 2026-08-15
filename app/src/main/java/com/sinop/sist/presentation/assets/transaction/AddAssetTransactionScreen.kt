@@ -48,10 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sinop.sist.domain.model.AssetTransactionType
 import com.sinop.sist.presentation.components.SistTopBar
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.ExpenseRedLight
-import com.sinop.sist.ui.theme.IncomeGreen
-import com.sinop.sist.ui.theme.IncomeGreenLight
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
 import com.sinop.sist.util.formatCurrency
 import java.time.Instant
 import java.time.LocalDate
@@ -108,16 +106,16 @@ fun AddAssetTransactionScreen(
                     label = "Alış",
                     selected = state.transactionType == AssetTransactionType.BUY,
                     onClick = { viewModel.onTransactionTypeChange(AssetTransactionType.BUY) },
-                    color = IncomeGreen,
-                    lightColor = IncomeGreenLight,
+                    color = LocalSistColors.current.positive,
+                    lightColor = LocalSistColors.current.positiveContainer,
                     modifier = Modifier.weight(1f)
                 )
                 TransactionTypeCard(
                     label = "Satış",
                     selected = state.transactionType == AssetTransactionType.SELL,
                     onClick = { viewModel.onTransactionTypeChange(AssetTransactionType.SELL) },
-                    color = ExpenseRed,
-                    lightColor = ExpenseRedLight,
+                    color = LocalSistColors.current.negative,
+                    lightColor = LocalSistColors.current.negativeContainer,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -127,7 +125,7 @@ fun AddAssetTransactionScreen(
                 onValueChange = viewModel::onQuantityChange,
                 label = { Text("Adet") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
             )
@@ -137,7 +135,7 @@ fun AddAssetTransactionScreen(
                 onValueChange = viewModel::onPricePerUnitChange,
                 label = { Text("Birim Fiyat") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
             )
@@ -147,7 +145,7 @@ fun AddAssetTransactionScreen(
                 onValueChange = viewModel::onFeeChange,
                 label = { Text("Komisyon/Ücret (opsiyonel)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
             )
@@ -208,7 +206,7 @@ fun AddAssetTransactionScreen(
                 label = { Text("Tarih") },
                 readOnly = true,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(SistRadius.lg),
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.DateRange, contentDescription = "Tarih seç")
@@ -221,7 +219,7 @@ fun AddAssetTransactionScreen(
                 onValueChange = viewModel::onNoteChange,
                 label = { Text("Not (opsiyonel)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             )
 
             state.error?.let {
@@ -239,7 +237,7 @@ fun AddAssetTransactionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Text(
                     text = if (state.isEditing) "Güncelle" else "Kaydet",
@@ -293,7 +291,7 @@ private fun TransactionTypeCard(
     Card(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Box(

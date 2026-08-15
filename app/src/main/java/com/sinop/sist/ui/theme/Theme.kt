@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -36,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Neutral10,
     surfaceVariant = SurfaceVariantLight,
     onSurfaceVariant = Neutral30,
-    outline = Neutral80,
+    outline = Neutral40,
     outlineVariant = Neutral90,
     scrim = Neutral0,
     inverseSurface = Neutral20,
@@ -67,11 +68,11 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = Neutral95,
     surfaceVariant = SurfaceVariantDark,
     onSurfaceVariant = Neutral80,
-    outline = Neutral40,
-    outlineVariant = Neutral30,
+    outline = Neutral30,
+    outlineVariant = SurfaceVariantDark,
     scrim = Neutral0,
     inverseSurface = Neutral95,
-    inverseOnSurface = Neutral10,
+    inverseOnSurface = Neutral20,
     inversePrimary = Primary40
 )
 
@@ -104,9 +105,13 @@ fun SistTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalSistColors provides if (darkTheme) DarkSistColors else LightSistColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

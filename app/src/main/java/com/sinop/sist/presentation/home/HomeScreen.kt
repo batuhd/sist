@@ -56,7 +56,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sinop.sist.domain.model.Account
 import com.sinop.sist.domain.model.AccountType
 import com.sinop.sist.presentation.components.SummaryCards
-import com.sinop.sist.ui.theme.Primary100
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 import com.sinop.sist.util.getAccountIcon
 import java.time.LocalDate
@@ -77,16 +79,26 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(
-                            text = currentDate.replaceFirstChar { it.uppercase() },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = "Sist",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column {
+                            Text(
+                                text = currentDate.replaceFirstChar { it.uppercase() },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Sist",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 18.dp)
+                                .size(7.dp)
+                                .clip(CircleShape)
+                                .background(LocalSistColors.current.gold)
                         )
                     }
                 },
@@ -99,7 +111,7 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = onAddTransactionClick,
                 containerColor = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Hızlı ekle", tint = MaterialTheme.colorScheme.onPrimary)
             }
@@ -136,7 +148,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 6.dp),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(SistRadius.xl),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Row(
@@ -147,13 +159,13 @@ fun HomeScreen(
                         modifier = Modifier
                             .size(56.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(com.sinop.sist.ui.theme.IncomeGreenLight),
+                            .background(LocalSistColors.current.goldContainer),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.PieChart,
                             contentDescription = null,
-                            tint = com.sinop.sist.ui.theme.IncomeGreen,
+                            tint = LocalSistColors.current.gold,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -233,7 +245,7 @@ private fun AccountsCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(SistRadius.xl),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -337,8 +349,10 @@ private fun AccountRow(
     account: Account,
     onLongClick: (() -> Unit)? = null
 ) {
-    val backgroundColor = account.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = account.colorHex
+    val backgroundColor = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val contentColor = if (backgroundColor.luminance() > 0.5f) Color.Black else Color.White
 
     Row(
@@ -376,9 +390,8 @@ private fun AccountRow(
         }
         Text(
             text = account.balance.formatCurrency(),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = if (account.balance >= 0) MaterialTheme.colorScheme.onSurface else com.sinop.sist.ui.theme.ExpenseRed
+            style = SistTypography.amountTitle,
+            color = if (account.balance >= 0) MaterialTheme.colorScheme.onSurface else LocalSistColors.current.negative
         )
     }
 }
@@ -395,13 +408,13 @@ private fun PortfolioRow(value: Double) {
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .background(com.sinop.sist.ui.theme.CardBlueLight),
+                    .background(LocalSistColors.current.categoryBlueContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                     contentDescription = null,
-                    tint = com.sinop.sist.ui.theme.CardBlue,
+                    tint = LocalSistColors.current.categoryBlue,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -414,9 +427,8 @@ private fun PortfolioRow(value: Double) {
         }
         Text(
             text = value.formatCurrency(),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = com.sinop.sist.ui.theme.CardBlue
+            style = SistTypography.amountTitle,
+            color = LocalSistColors.current.categoryBlue
         )
     }
 }

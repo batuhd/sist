@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
@@ -208,9 +211,11 @@ fun MainNavigation() {
                     onAssetClick = { id -> navController.navigate(Screen.AssetDetail.createRoute(id)) }
                 )
             }
-            composable(Screen.AddAsset.route) {
+            composable(Screen.AddAsset.route) { backStackEntry ->
+                val assetId = backStackEntry.arguments?.getString("assetId")?.toLongOrNull()
                 AddAssetScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    assetId = assetId
                 )
             }
             composable(Screen.AssetDetail.route) { backStackEntry ->
@@ -288,23 +293,19 @@ private fun SistBottomNavigation(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(28.dp),
-                ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-            ),
+            .padding(horizontal = 24.dp)
+            .padding(top = 12.dp, bottom = 12.dp)
+            .windowInsetsPadding(WindowInsets.navigationBars),
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(68.dp)
-                .navigationBarsPadding(),
+                .height(68.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -317,7 +318,8 @@ private fun SistBottomNavigation(
                 BottomNavItem(
                     item = item,
                     selected = selected,
-                    onClick = { onNavigate(item.route) }
+                    onClick = { onNavigate(item.route) },
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -328,7 +330,8 @@ private fun SistBottomNavigation(
 private fun BottomNavItem(
     item: BottomNavItem,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val iconColor = if (selected) {
         MaterialTheme.colorScheme.primary
@@ -342,9 +345,8 @@ private fun BottomNavItem(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
-            .padding(horizontal = 8.dp, vertical = 6.dp)
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

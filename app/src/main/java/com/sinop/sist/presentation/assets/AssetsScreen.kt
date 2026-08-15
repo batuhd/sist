@@ -19,14 +19,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,9 +34,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,16 +42,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sinop.sist.domain.model.AssetType
 import com.sinop.sist.domain.model.AssetWithPrice
 import com.sinop.sist.domain.model.PortfolioSummary
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
+import com.sinop.sist.presentation.components.EmptyState
+import com.sinop.sist.presentation.components.SistTopBar
+import com.sinop.sist.ui.theme.Error80
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.Primary90
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,17 +84,9 @@ fun AssetsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Portföyüm") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Geri",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
+            SistTopBar(
+                title = "Portföyüm",
+                onBackClick = onBackClick,
                 actions = {
                     IconButton(
                         onClick = { viewModel.refreshPrices() },
@@ -106,17 +98,14 @@ fun AssetsScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddAssetClick,
                 containerColor = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Varlık ekle", tint = MaterialTheme.colorScheme.onPrimary)
             }
@@ -134,7 +123,13 @@ fun AssetsScreen(
             }
 
             if (state.assets.isEmpty()) {
-                EmptyPortfolioView()
+                EmptyState(
+                    icon = Icons.Default.ShowChart,
+                    title = "Henüz varlık eklenmemiş",
+                    subtitle = "Hisse, fon, döviz veya altın eklemek için + butonuna dokunun",
+                    actionLabel = "Varlık Ekle",
+                    onAction = onAddAssetClick
+                )
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -155,17 +150,24 @@ fun AssetsScreen(
 
 @Composable
 private fun PortfolioSummaryCard(summary: PortfolioSummary) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    val sistColors = LocalSistColors.current
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(SistRadius.xl))
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(sistColors.hero, sistColors.heroVariant)
+                )
+            )
+            .padding(20.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column {
             Text(
                 text = "Portföy Özeti",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = sistColors.onHero
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -193,22 +195,21 @@ private fun PortfolioSummaryCard(summary: PortfolioSummary) {
                         Icon(
                             imageVector = if (isPositive) Icons.Default.TrendingUp else Icons.Default.TrendingDown,
                             contentDescription = null,
-                            tint = if (isPositive) IncomeGreen else ExpenseRed,
+                            tint = if (isPositive) Primary90 else Error80,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Kar/Zarar",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = sistColors.onHeroMuted
                         )
                     }
                     val percent = summary.totalProfitLossPercent
                     Text(
                         text = "${if (isPositive) "+" else ""}${profitLoss.formatCurrency()} ${if (percent != null) "(%${"%.2f".format(percent)})" else ""}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isPositive) IncomeGreen else ExpenseRed
+                        style = SistTypography.amountTitle,
+                        color = if (isPositive) Primary90 else Error80
                     )
                 }
             }
@@ -222,17 +223,17 @@ private fun SummaryItem(
     amount: Double,
     modifier: Modifier = Modifier
 ) {
+    val sistColors = LocalSistColors.current
     Column(modifier = modifier) {
         Text(
             text = title,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+            color = sistColors.onHeroMuted
         )
         Text(
             text = amount.formatCurrency(),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            style = SistTypography.amountHeadline,
+            color = sistColors.onHero
         )
     }
 }
@@ -248,7 +249,7 @@ private fun AssetListItem(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -297,7 +298,7 @@ private fun AssetListItem(
                     else -> "Fiyat yok"
                 }
                 val sourceColor = when (sourceText) {
-                    "Yahoo Finance", "FVT" -> IncomeGreen
+                    "Yahoo Finance", "FVT" -> LocalSistColors.current.positive
                     "Fiyat yok" -> MaterialTheme.colorScheme.error
                     else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 }
@@ -310,15 +311,13 @@ private fun AssetListItem(
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = asset.currentValue?.formatCurrency() ?: "—",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    style = SistTypography.amountTitle
                 )
                 if (profitLoss != null) {
                     Text(
                         text = "${if (isPositive) "+" else ""}${profitLoss.formatCurrency()}",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium,
-                        color = if (isPositive) IncomeGreen else ExpenseRed
+                        style = SistTypography.amountSmall,
+                        color = if (isPositive) LocalSistColors.current.positive else LocalSistColors.current.negative
                     )
                 }
                 asset.currentPrice?.let {
@@ -334,36 +333,6 @@ private fun AssetListItem(
 }
 
 @Composable
-private fun EmptyPortfolioView() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.ShowChart,
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Henüz varlık eklenmemiş",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Hisse, fon, döviz veya altın eklemek için + butonuna dokunun",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
 private fun assetTypeIcon(type: AssetType) = when (type) {
     AssetType.STOCK -> Icons.Default.BarChart
     AssetType.FUND -> Icons.Default.AttachMoney
@@ -374,9 +343,9 @@ private fun assetTypeIcon(type: AssetType) = when (type) {
 @Composable
 private fun assetTypeColor(type: AssetType): Color = when (type) {
     AssetType.STOCK -> MaterialTheme.colorScheme.primary
-    AssetType.FUND -> IncomeGreen
-    AssetType.CURRENCY -> Color(0xFF2196F3)
-    AssetType.GOLD -> Color(0xFFFFA000)
+    AssetType.FUND -> LocalSistColors.current.positive
+    AssetType.CURRENCY -> LocalSistColors.current.categoryBlue
+    AssetType.GOLD -> LocalSistColors.current.gold
 }
 
 private fun Double.formatQuantity(): String = when {

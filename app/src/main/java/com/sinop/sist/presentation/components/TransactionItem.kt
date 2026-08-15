@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,8 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.sinop.sist.domain.model.Category
 import com.sinop.sist.domain.model.Transaction
 import com.sinop.sist.domain.model.TransactionType
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 import com.sinop.sist.util.formatDateTime
 import com.sinop.sist.util.getCategoryIcon
@@ -45,11 +47,12 @@ fun TransactionItem(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val sistColors = LocalSistColors.current
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -98,16 +101,14 @@ fun TransactionItem(
                 if (transaction.type == TransactionType.TRANSFER) {
                     Text(
                         text = transaction.amount.formatCurrency(transaction.currencyCode),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = SistTypography.amountTitle,
                         color = MaterialTheme.colorScheme.primary
                     )
                 } else {
                     Text(
                         text = "${if (transaction.type == TransactionType.INCOME) "+" else "-"}${transaction.amount.formatCurrency(transaction.currencyCode)}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (transaction.type == TransactionType.INCOME) IncomeGreen else ExpenseRed
+                        style = SistTypography.amountTitle,
+                        color = if (transaction.type == TransactionType.INCOME) sistColors.positive else sistColors.negative
                     )
                 }
                 Row {
@@ -129,7 +130,7 @@ fun TransactionItem(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Sil",
-                            tint = ExpenseRed,
+                            tint = sistColors.negative,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -141,8 +142,10 @@ fun TransactionItem(
 
 @Composable
 fun CategoryIcon(category: Category?, modifier: Modifier = Modifier) {
-    val backgroundColor = category?.colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
-        ?: MaterialTheme.colorScheme.primaryContainer
+    val colorHex = category?.colorHex
+    val backgroundColor = remember(colorHex) {
+        colorHex?.let { Color(android.graphics.Color.parseColor(it)) }
+    } ?: MaterialTheme.colorScheme.primaryContainer
     val contentColor = if (backgroundColor.luminance() > 0.5f) Color.Black else Color.White
 
     Box(

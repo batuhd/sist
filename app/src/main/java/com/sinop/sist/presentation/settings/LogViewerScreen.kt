@@ -1,5 +1,7 @@
 package com.sinop.sist.presentation.settings
 
+import com.sinop.sist.ui.theme.SistRadius
+
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -95,7 +97,7 @@ fun LogViewerScreen(
             ) {
                 Button(
                     onClick = { logs = CrashLogger.readLogs() },
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(SistRadius.md)
                 ) {
                     Text("Yenile")
                 }
@@ -104,7 +106,7 @@ fun LogViewerScreen(
                         CrashLogger.clearLogs()
                         logs = CrashLogger.readLogs()
                     },
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(SistRadius.md)
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null)
                     Text("Temizle", modifier = Modifier.padding(start = 6.dp))

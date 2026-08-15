@@ -57,8 +57,11 @@ import com.sinop.sist.domain.model.AssetTransaction
 import com.sinop.sist.domain.model.AssetTransactionType
 import com.sinop.sist.domain.model.AssetType
 import com.sinop.sist.domain.model.AssetWithPrice
-import com.sinop.sist.ui.theme.ExpenseRed
-import com.sinop.sist.ui.theme.IncomeGreen
+import com.sinop.sist.presentation.components.EmptyState
+import com.sinop.sist.presentation.components.SistTopBar
+import com.sinop.sist.ui.theme.LocalSistColors
+import com.sinop.sist.ui.theme.SistRadius
+import com.sinop.sist.ui.theme.SistTypography
 import com.sinop.sist.util.formatCurrency
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -80,13 +83,9 @@ fun AssetDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(state.asset?.symbol ?: "Varlık Detayı") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri")
-                    }
-                },
+            SistTopBar(
+                title = state.asset?.symbol ?: "Varlık Detayı",
+                onBackClick = onBackClick,
                 actions = {
                     var menuExpanded by remember { mutableStateOf(false) }
                     IconButton(onClick = { menuExpanded = true }) {
@@ -127,17 +126,14 @@ fun AssetDetailScreen(
                             }
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onAddTransactionClick(assetId) },
                 containerColor = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(SistRadius.lg)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "İşlem ekle", tint = MaterialTheme.colorScheme.onPrimary)
             }
@@ -162,7 +158,13 @@ fun AssetDetailScreen(
             )
 
             if (state.transactions.isEmpty()) {
-                EmptyTransactionsView()
+                EmptyState(
+                    icon = Icons.Default.Add,
+                    title = "Henüz işlem yok",
+                    subtitle = "Alış veya satış eklemek için + butonuna dokunun",
+                    actionLabel = "İşlem Ekle",
+                    onAction = { onAddTransactionClick(assetId) }
+                )
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -234,13 +236,16 @@ fun AssetDetailScreen(
 private fun AssetDetailHeader(asset: AssetWithPrice) {
     val profitLoss = asset.profitLoss
     val isPositive = profitLoss != null && profitLoss >= 0
+    val sistColors = LocalSistColors.current
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(SistRadius.xl))
+            .background(sistColors.hero)
+            .padding(20.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -250,27 +255,28 @@ private fun AssetDetailHeader(asset: AssetWithPrice) {
                     Text(
                         text = asset.asset.symbol,
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = sistColors.onHero
                     )
                     asset.asset.name?.let {
                         Text(
                             text = it,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = sistColors.onHeroMuted
                         )
                     }
                 }
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(assetTypeColor(asset.asset.assetType).copy(alpha = 0.15f))
+                        .background(sistColors.onHero.copy(alpha = 0.12f))
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
                         text = assetTypeLabel(asset.asset.assetType),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
-                        color = assetTypeColor(asset.asset.assetType)
+                        color = sistColors.onHero
                     )
                 }
             }
@@ -305,14 +311,14 @@ private fun AssetDetailHeader(asset: AssetWithPrice) {
                     Text(
                         text = "Kar/Zarar",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        color = sistColors.onHeroMuted
                     )
                     val percent = asset.profitLossPercent
                     Text(
                         text = "${if (isPositive) "+" else ""}${profitLoss.formatCurrency()} ${if (percent != null) "(%${"%.2f".format(percent)})" else ""}",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isPositive) IncomeGreen else ExpenseRed
+                        style = SistTypography.amountTitle,
+                        color = if (isPositive) sistColors.positive else sistColors.negative
                     )
                 }
             }
@@ -322,16 +328,17 @@ private fun AssetDetailHeader(asset: AssetWithPrice) {
 
 @Composable
 private fun DetailItem(label: String, value: String, modifier: Modifier = Modifier) {
+    val sistColors = LocalSistColors.current
     Column(modifier = modifier) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = sistColors.onHeroMuted
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
+            style = SistTypography.amountTitle,
+            color = sistColors.onHero
         )
     }
 }
@@ -344,10 +351,11 @@ private fun TransactionItem(
 ) {
     val isBuy = transaction.transactionType == AssetTransactionType.BUY
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale("tr", "TR"))
+    val sistColors = LocalSistColors.current
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(SistRadius.lg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -361,12 +369,14 @@ private fun TransactionItem(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(if (isBuy) IncomeGreen.copy(alpha = 0.15f) else ExpenseRed.copy(alpha = 0.15f)),
+                    .background(
+                        if (isBuy) sistColors.positiveContainer else sistColors.negativeContainer
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = if (isBuy) "A" else "S",
-                    color = if (isBuy) IncomeGreen else ExpenseRed,
+                    color = if (isBuy) sistColors.positive else sistColors.negative,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -394,12 +404,11 @@ private fun TransactionItem(
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = "${transaction.quantity.formatQuantity()} adet",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
+                    style = SistTypography.amountTitle
                 )
                 Text(
                     text = "@ ${transaction.pricePerUnit.formatCurrency()}",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = SistTypography.amountSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (transaction.fee > 0) {
@@ -414,32 +423,10 @@ private fun TransactionItem(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Sil",
-                    tint = MaterialTheme.colorScheme.error
+                    tint = sistColors.negative
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun EmptyTransactionsView() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Spacer(modifier = Modifier.height(40.dp))
-        Text(
-            text = "Henüz işlem yok",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Alış veya satış eklemek için + butonuna dokunun",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
@@ -487,9 +474,9 @@ private fun assetTypeLabel(type: AssetType): String = when (type) {
 @Composable
 private fun assetTypeColor(type: AssetType) = when (type) {
     AssetType.STOCK -> MaterialTheme.colorScheme.primary
-    AssetType.FUND -> IncomeGreen
-    AssetType.CURRENCY -> androidx.compose.ui.graphics.Color(0xFF2196F3)
-    AssetType.GOLD -> androidx.compose.ui.graphics.Color(0xFFFFA000)
+    AssetType.FUND -> LocalSistColors.current.positive
+    AssetType.CURRENCY -> LocalSistColors.current.categoryBlue
+    AssetType.GOLD -> LocalSistColors.current.gold
 }
 
 private fun Double.formatQuantity(): String = when {
