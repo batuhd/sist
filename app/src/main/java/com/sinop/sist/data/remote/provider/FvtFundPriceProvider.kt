@@ -2,6 +2,7 @@ package com.sinop.sist.data.remote.provider
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.sinop.sist.BuildConfig
 import com.sinop.sist.data.remote.api.FvtApiService
 import com.sinop.sist.data.remote.dto.fvt.FvtFund
 import kotlinx.coroutines.sync.Mutex
@@ -67,7 +68,7 @@ class FvtFundPriceProvider(context: Context) {
             .followSslRedirects(true)
             .addInterceptor(authInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             })
             .build()
     }

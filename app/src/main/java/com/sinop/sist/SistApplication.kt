@@ -6,6 +6,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.sinop.sist.BuildConfig
 import com.sinop.sist.data.local.database.SistDatabase
 import com.sinop.sist.data.remote.api.FinanceApiService
 import com.sinop.sist.data.remote.provider.FvtFundPriceProvider
@@ -105,7 +106,9 @@ class AppContainer(private val application: Application) {
                     .build()
                 chain.proceed(request)
             }
-            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            })
             .build()
     }
 
