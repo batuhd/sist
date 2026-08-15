@@ -21,7 +21,6 @@ Bu uygulamanın kullanımı sonucunda doğabilecek doğrudan veya dolaylı maddi
 
 Bu uygulamayı kullanarak yukarıdaki şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
 
-
 ---
 
 ## ✨ Özellikler
@@ -70,9 +69,21 @@ Bu uygulamayı kullanarak yukarıdaki şartları okuduğunuzu, anladığınızı
 <p align="center">
   <img src="screenshots/1.jpg" alt="Ana Sayfa" width="200"/>
   <img src="screenshots/2.jpg" alt="İşlemler" width="200"/>
-  <img src="screenshots/3.png" alt="Portföy" width="200"/>
-  <img src="screenshots/4.png" alt="Bütçeler" width="200"/>
+  <img src="screenshots/3.jpg" alt="Portföy" width="200"/>
+  <img src="screenshots/4.jpg" alt="Bütçeler" width="200"/>
 </p>
+
+---
+
+## 🎨 Tasarım Sistemi
+
+Sist, **v2.0.0** ile birlikte merkezi bir tasarım sistemi üzerine kuruludur:
+
+- **Renk:** `SistColors` - kâr/zarar, uyarı, altın vurgu ve kategori renkleri tek kaynaktan yönetilir; kod içinde sabit renk yoktur.
+- **Tipografi:** `SistTypography` - tutar ve para birimi gösterimlerinde tabular rakamlar kullanılır; listelerde hizalama kaymaz.
+- **Boşluk ve Yarıçap:** `SistDimens` (4/8/12/16/24/32dp) ile tutarlı arayüz ölçüleri.
+- **Hareket:** `SistMotion` ile tutarlı animasyon süreleri ve yumuşatma eğrileri.
+- Tasarım token dokümantasyonu: [`docs/design-tokens.md`](docs/design-tokens.md)
 
 ---
 
@@ -82,6 +93,7 @@ Bu uygulamayı kullanarak yukarıdaki şartları okuduğunuzu, anladığınızı
 |------|-----------|
 | Dil | Kotlin 2.1.0 |
 | UI | Jetpack Compose + Material 3 |
+| Tasarım Sistemi | SistColors, SistTypography, SistDimens, SistMotion |
 | Mimari | MVVM + Manual DI |
 | Veritabanı | Room (KSP) |
 | Ağ | Retrofit + OkHttp + Gson |
@@ -96,9 +108,15 @@ Bu uygulamayı kullanarak yukarıdaki şartları okuduğunuzu, anladığınızı
 ## 📥 Kurulum
 
 ### Hazır APK ile Kurulum
-En son sürümü [Releases](https://github.com/batuhd/sist/releases) sayfasından indirebilirsiniz.
 
-1. `sist-v1.0.0.apk` dosyasını indirin.
+En son sürümü [Releases](https://github.com/batuhd/sist/releases) sayfasından indirebilirsiniz. Her sürüm iki APK içerir:
+
+- **`sist-vX.Y.Z.apk`** - İmzalı ve optimize edilmiş release sürümü (önerilen)
+- **`sist-vX.Y.Z-debug.apk`** - Hata ayıklama amaçlı debug sürümü
+
+Kurulum adımları:
+
+1. `sist-v2.0.0.apk` dosyasını indirin.
 2. Android cihazınıza aktarın.
 3. APK dosyasına dokunarak yükleyin.
 4. Gerekirse **Bilinmeyen kaynaklar** için izin verin.
@@ -160,9 +178,9 @@ Sist ve geliştiricileri, uygulama üzerinden sunulan verilerin doğruluğu, eks
 - [x] Borç/taksit takibi
 - [x] Ana ekran widget'ları
 - [x] Bildirimler
+- [x] Koyu/aydınlık tema desteği (sistem temasına uyar)
 - [ ] CSV/Excel dışa aktarma
 - [ ] Bulut yedekleme ve geri yükleme
-- [ ] Koyu/aydınlık tema seçeneği
 - [ ] Daha fazla widget boyutu
 
 ---
