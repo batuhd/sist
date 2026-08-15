@@ -19,7 +19,6 @@ Sist, Türkçe kullanıcı deneyimi ve kişisel veri gizliliği öncelikleriyle 
 ## İçindekiler
 
 - [Öne Çıkanlar](#öne-çıkanlar)
-- [Ekran Görüntüleri](#ekran-görüntüleri)
 - [Özellikler](#özellikler)
 - [Gizlilik ve Güvenlik](#gizlilik-ve-güvenlik)
 - [Veri Kaynakları](#veri-kaynakları)
@@ -42,21 +41,11 @@ Sist, Türkçe kullanıcı deneyimi ve kişisel veri gizliliği öncelikleriyle 
 | **Yerel veri** | Finansal kayıtlar cihazdaki Room veritabanında tutulur. |
 | **Kapsamlı takip** | Hesap, işlem, bütçe, borç, taksit ve yatırım kayıtları tek uygulamada. |
 | **Piyasa fiyatları** | Hisse, ETF ve Türkiye yatırım fonları için güncel fiyat desteği. |
-| **Widget desteği** | Ana ekrandan portföy, bütçe, net varlık ve hızlı işlem görünümü. |
+| **Widget desteği** | Altı ana ekran widget'ı: portföy, bütçe, net varlık, hızlı işlem, portföy dağılımı ve takip listesi. |
+| **Kişiselleştirme** | Her widget için renk teması ve yazı boyutu seçenekleri; tüm widget'lara tek seferde uygulama. |
 | **Modern arayüz** | Jetpack Compose ve Material 3 tabanlı, açık ve koyu tema desteği. |
 | **Çevrimdışı kullanım** | İnternet olmadan kayıt ekleme ve yerel finans takibi. |
 | **Biyometrik koruma** | Parmak izi ve yüz tanıma ile uygulama erişimi. |
-
----
-
-## Ekran Görüntüleri
-
-<p align="center">
-  <img src="screenshots/1.jpg" alt="Sist ana sayfası" width="200"/>
-  <img src="screenshots/2.jpg" alt="Sist işlemler ekranı" width="200"/>
-  <img src="screenshots/3.jpg" alt="Sist portföy ekranı" width="200"/>
-  <img src="screenshots/4.jpg" alt="Sist bütçeler ekranı" width="200"/>
-</p>
 
 ---
 
@@ -125,10 +114,21 @@ Sist, Türkçe kullanıcı deneyimi ve kişisel veri gizliliği öncelikleriyle 
 
 ### Ana Ekran Widget'ları
 
-- Portföy widget'ı
-- Bütçe widget'ı
-- Net varlık widget'ı
-- Hızlı gelir veya gider ekleme widget'ı
+Altı widget, uygulamanın tasarım diliyle birebir uyumlu çalışır:
+
+- **Portföy widget'ı:** Toplam değer, kar/zarar ve en hareketli varlıklar
+- **Bütçe widget'ı:** Aylık bütçe ilerlemesi, kategori bütçeleri ve aşım projeksiyonu
+- **Toplam Varlık widget'ı:** Hesaplar ve portföy kırılımı, hesap bazlı detaylar
+- **Hızlı İşlem widget'ı:** Gelir, gider ve transfer butonları, sık kullanılan kategori kısayolları
+- **Portföy Dağılımı widget'ı:** Varlık türü dağılımı ve varlık bazlı listeler
+- **Takip Listesi widget'ı:** Seçtiğiniz sembollerin güncel fiyatları
+
+Widget kişiselleştirme:
+
+- Her widget için ayrı **renk teması**: Koyu Yeşil (marka), Koyu, Açık veya Sistem teması
+- Her widget için ayrı **yazı boyutu**: Normal, Büyük veya Çok Büyük
+- Widget'lar ana ekranda sürüklenerek yeniden boyutlandırılabilir; her boyutta içerik düzenlenir
+- **Ayarlar > Widget Ayarları** ekranından tüm widget'lara aynı anda renk ve yazı boyutu uygulanabilir
 
 ### Görsel Deneyim
 
@@ -376,6 +376,10 @@ v2.0.1 yeni bir imza anahtarı kullandığı için v2.0.0 ve önceki sürümlerd
 
 Hayır. Fiyatlar üçüncü taraf veri kaynaklarından alınır ve gecikmeli, eksik veya hatalı olabilir. Uygulama yatırım tavsiyesi vermez.
 
+### Widget'ların rengini ve yazı boyutunu nasıl değiştiririm?
+
+Her widget'ın başlığındaki dişli ikonundan o widget'a özel tema ve yazı boyutu seçebilirsiniz. Ayrıca uygulama içindeki **Ayarlar > Widget Ayarları** ekranından tüm widget'lara aynı anda uygulayabilirsiniz. Widget boyutları Android ana ekranı tarafından yönetilir; widget'a basılı tutup sürükleyerek değiştirilir.
+
 ### Release ve debug APK arasındaki fark nedir?
 
 Release APK optimize edilmiş ve günlük kullanım için hazırlanmış sürümdür. Debug APK geliştirme ve hata ayıklama amacıyla kullanılır; loglama ve geliştirme araçları içerebilir.
@@ -392,7 +396,8 @@ Release APK optimize edilmiş ve günlük kullanım için hazırlanmış sürüm
 - [x] Bütçe planlama
 - [x] Borç ve taksit takibi
 - [x] Tekrarlayan işlemler
-- [x] Ana ekran widget'ları
+- [x] Altı ana ekran widget'ı (portföy, bütçe, net varlık, hızlı işlem, dağılım, takip listesi)
+- [x] Widget renk teması ve yazı boyutu kişiselleştirme
 - [x] Bildirimler
 - [x] Fiyat uyarıları
 - [x] Biyometrik doğrulama altyapısı
@@ -400,7 +405,6 @@ Release APK optimize edilmiş ve günlük kullanım için hazırlanmış sürüm
 - [x] Android cloud backup'ın kapatılması
 - [ ] CSV ve Excel dışa aktarma
 - [ ] Manuel veri içe aktarma
-- [ ] Daha fazla widget boyutu
 - [ ] Gelişmiş portföy analizleri
 - [ ] Özelleştirilebilir kategori simgeleri
 
