@@ -6,8 +6,10 @@
     android:minResizeWidth="180dp"
     android:minResizeHeight="50dp"
     android:previewImage="@drawable/widget_preview"
+    android:previewLayout="@layout/preview_portfolio"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="4"
-    android:targetCellHeight="3"
+    android:targetCellHeight="4"
     android:updatePeriodMillis="1800000"
+    android:description="@string/portfolio_widget_description"
     android:widgetCategory="home_screen" />

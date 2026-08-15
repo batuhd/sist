@@ -21,4 +21,7 @@ interface PriceCacheDao {
 
     @Query("SELECT * FROM price_cache ORDER BY symbol ASC")
     fun getAll(): Flow<List<PriceCacheEntity>>
+
+    @Query("DELETE FROM price_cache WHERE symbol = :symbol")
+    suspend fun deleteBySymbol(symbol: String)
 }

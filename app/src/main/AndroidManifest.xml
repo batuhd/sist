@@ -33,7 +33,10 @@
 
         <receiver
             android:name=".presentation.widget.PortfolioWidgetReceiver"
-            android:exported="true">
+            android:configure=".presentation.widget.WidgetThemeConfigureActivity"
+            android:exported="true"
+            android:widgetFeatures="configuration_optional"
+            tools:targetApi="p">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -44,7 +47,10 @@
 
         <receiver
             android:name=".presentation.widget.BudgetWidgetReceiver"
-            android:exported="true">
+            android:configure=".presentation.widget.WidgetThemeConfigureActivity"
+            android:exported="true"
+            android:widgetFeatures="configuration_optional"
+            tools:targetApi="p">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -55,7 +61,10 @@
 
         <receiver
             android:name=".presentation.widget.NetWorthWidgetReceiver"
-            android:exported="true">
+            android:configure=".presentation.widget.WidgetThemeConfigureActivity"
+            android:exported="true"
+            android:widgetFeatures="configuration_optional"
+            tools:targetApi="p">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -66,7 +75,10 @@
 
         <receiver
             android:name=".presentation.widget.QuickAddWidgetReceiver"
-            android:exported="true">
+            android:configure=".presentation.widget.WidgetThemeConfigureActivity"
+            android:exported="true"
+            android:widgetFeatures="configuration_optional"
+            tools:targetApi="p">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -74,6 +86,59 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/quickadd_widget_info" />
         </receiver>
+
+        <receiver
+            android:name=".presentation.widget.DistributionWidgetReceiver"
+            android:configure=".presentation.widget.WidgetThemeConfigureActivity"
+            android:exported="true"
+            android:widgetFeatures="configuration_optional"
+            tools:targetApi="p">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/distribution_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".presentation.widget.WatchlistWidgetReceiver"
+            android:configure=".presentation.widget.WatchlistConfigureActivity"
+            android:exported="true"
+            android:widgetFeatures="configuration_optional"
+            tools:targetApi="p">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/watchlist_widget_info" />
+        </receiver>
+
+        <activity
+            android:name=".presentation.widget.QuickAddActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:theme="@style/Theme.Sist"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".presentation.widget.WatchlistConfigureActivity"
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".presentation.widget.WidgetThemeConfigureActivity"
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
         <receiver
             android:name=".worker.BootReceiver"
