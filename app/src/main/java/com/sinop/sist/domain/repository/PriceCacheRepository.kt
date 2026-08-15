@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface PriceCacheRepository {
     suspend fun savePrice(price: PriceCache)
     suspend fun getPrice(symbol: String): PriceCache?
+    suspend fun deletePrice(symbol: String)
     fun getPrices(symbols: List<String>): Flow<List<PriceCache>>
     fun getAll(): Flow<List<PriceCache>>
 }

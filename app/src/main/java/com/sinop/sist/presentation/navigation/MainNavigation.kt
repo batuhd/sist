@@ -65,6 +65,7 @@ import com.sinop.sist.presentation.home.HomeScreen
 import com.sinop.sist.presentation.recurring.RecurringTransactionsScreen
 import com.sinop.sist.presentation.settings.SettingsScreen
 import com.sinop.sist.presentation.settings.LogViewerScreen
+import com.sinop.sist.presentation.widget.WidgetGlobalSettingsScreen
 import com.sinop.sist.presentation.transactions.TransactionsScreen
 import com.sinop.sist.presentation.transactions.add.AddTransactionScreen
 
@@ -76,7 +77,7 @@ sealed class BottomNavItem(
     data object Home : BottomNavItem(Screen.Home.route, Icons.Default.Home, "Ana Sayfa")
     data object Transactions : BottomNavItem(Screen.Transactions.route, Icons.Default.Wallet, "İşlemler")
     data object Assets : BottomNavItem(Screen.Assets.route, Icons.Default.ShowChart, "Portföy")
-    data object More : BottomNavItem("more", Icons.Default.MoreHoriz, "Diğer")
+    data object Settings : BottomNavItem(Screen.Settings.route, Icons.Default.Settings, "Ayarlar")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,14 +87,12 @@ fun MainNavigation() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val context = LocalContext.current
-    var showMoreSheet by remember { mutableStateOf(false) }
-    val moreSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val bottomNavRoutes = listOf(
         BottomNavItem.Home,
         BottomNavItem.Transactions,
         BottomNavItem.Assets,
-        BottomNavItem.More
+        BottomNavItem.Settings
     )
 
     val showBottomBar = currentDestination?.route in bottomNavRoutes.map { it.route }
@@ -105,10 +104,6 @@ fun MainNavigation() {
                     items = bottomNavRoutes,
                     currentDestination = currentDestination,
                     onNavigate = { route ->
-                        if (route == BottomNavItem.More.route) {
-                            showMoreSheet = true
-                            return@SistBottomNavigation
-                        }
                         if (currentDestination?.route == route) return@SistBottomNavigation
                         if (route == Screen.Home.route) {
                             navController.popBackStack(Screen.Home.route, inclusive = false, saveState = false)
@@ -134,7 +129,8 @@ fun MainNavigation() {
             composable(Screen.Home.route) {
                 HomeScreen(
                     onAddTransactionClick = { navController.navigate(Screen.AddTransaction.createRoute()) },
-                    onViewBudgetsClick = { navController.navigate(Screen.Budgets.route) }
+                    onViewBudgetsClick = { navController.navigate(Screen.Budgets.route) },
+                    onViewDebtsClick = { navController.navigate(Screen.Debts.route) }
                 )
             }
             composable(Screen.Transactions.route) {
@@ -172,6 +168,7 @@ fun MainNavigation() {
                 SettingsScreen(
                     onCategoriesClick = { navController.navigate(Screen.Categories.route) },
                     onRecurringClick = { navController.navigate(Screen.Recurring.route) },
+                    onWidgetsClick = { navController.navigate(Screen.WidgetSettings.route) },
                     onNotificationsClick = {
                         val intent = android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                             putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
@@ -197,6 +194,11 @@ fun MainNavigation() {
                         }
                     },
                     onLogsClick = { navController.navigate(Screen.Logs.route) }
+                )
+            }
+            composable(Screen.WidgetSettings.route) {
+                WidgetGlobalSettingsScreen(
+                    onBackClick = { navController.popBackStack() }
                 )
             }
             composable(Screen.Logs.route) {
@@ -241,47 +243,6 @@ fun MainNavigation() {
             }
         }
     }
-
-    if (showMoreSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showMoreSheet = false },
-            sheetState = moreSheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 32.dp)
-                    .navigationBarsPadding()
-            ) {
-                Text(
-                    text = "Diğer",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-                MoreSheetItem(
-                    icon = Icons.AutoMirrored.Filled.ReceiptLong,
-                    title = "Borç / Taksit",
-                    onClick = {
-                        showMoreSheet = false
-                        navController.navigate(Screen.Debts.route)
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                MoreSheetItem(
-                    icon = Icons.Default.Settings,
-                    title = "Ayarlar",
-                    onClick = {
-                        showMoreSheet = false
-                        navController.navigate(Screen.Settings.route)
-                    }
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -310,11 +271,7 @@ private fun SistBottomNavigation(
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { item ->
-                val selected = if (item.route == "more") {
-                    false
-                } else {
-                    currentDestination?.hierarchy?.any { it.route == item.route } == true
-                }
+                val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
                 BottomNavItem(
                     item = item,
                     selected = selected,
@@ -370,43 +327,6 @@ private fun BottomNavItem(
             style = MaterialTheme.typography.labelSmall,
             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
             color = iconColor
-        )
-    }
-}
-
-@Composable
-private fun MoreSheetItem(
-    icon: ImageVector,
-    title: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium
         )
     }
 }

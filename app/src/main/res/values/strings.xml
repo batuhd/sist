@@ -2,6 +2,14 @@
     <string name="app_name">Sist - Finans Takibi</string>
     <string name="budget_widget_name">Bütçe Durumu</string>
     <string name="portfolio_widget_name">Portföy Durumu</string>
-    <string name="upcoming_widget_name">Yaklaşan Ödemeler</string>
-    <string name="quick_add_widget_name">Hızlı Harcama</string>
+    <string name="networth_widget_name">Toplam Varlık</string>
+    <string name="quick_add_widget_name">Hızlı İşlem</string>
+    <string name="distribution_widget_name">Portföy Dağılımı</string>
+    <string name="watchlist_widget_name">Takip Listesi</string>
+    <string name="portfolio_widget_description">Portföy değeri, kâr/zarar ve en hareketli varlıklar</string>
+    <string name="budget_widget_description">Aylık bütçe durumu ve kategori harcamaları</string>
+    <string name="networth_widget_description">Toplam varlığınız: hesaplar ve portföy</string>
+    <string name="quickadd_widget_description">Tek dokunuşla gelir, gider veya transfer ekleyin</string>
+    <string name="distribution_widget_description">Portföyünüzün varlık türü dağılımı</string>
+    <string name="watchlist_widget_description">Seçtiğiniz sembollerin anlık fiyatları</string>
 </resources>

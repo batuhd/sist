@@ -20,6 +20,10 @@ class PriceCacheRepositoryImpl(
         return priceCacheDao.getBySymbol(symbol)?.toDomain()
     }
 
+    override suspend fun deletePrice(symbol: String) {
+        priceCacheDao.deleteBySymbol(symbol)
+    }
+
     override fun getPrices(symbols: List<String>): Flow<List<PriceCache>> {
         return priceCacheDao.getBySymbols(symbols).map { list -> list.map { it.toDomain() } }
     }
