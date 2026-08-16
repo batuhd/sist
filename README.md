@@ -1,433 +1,359 @@
-# Sist
+<div align="center">
 
-## Kişisel Finans ve Yatırım Takibi
+# 🌿 SIST
+### *Akıllı, Güvenli ve Özgür Kişisel Finans & Portföy Takip Ekosistemi*
 
-Gelirlerini, giderlerini, hesaplarını, bütçelerini, borçlarını ve yatırımlarını tek bir yerde yönet.
+**Tüm gelirlerinizi, giderlerinizi, banka ve yatırım hesaplarınızı, bütçelerinizi, borç ve taksitlerinizi tek bir çatı altında yönetin. Sıfır sunucu, %100 yerel gizlilik.**
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-7F52FF?logo=kotlin)](https://kotlinlang.org/)
-[![Android](https://img.shields.io/badge/Android-API%2026%2B-3DDC84?logo=android)](https://developer.android.com/)
-[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpack-compose)](https://developer.android.com/jetpack/compose)
-[![Latest Release](https://img.shields.io/github/v/release/batuhd/sist?label=release)](https://github.com/batuhd/sist/releases/latest)
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+<br>
 
-Sist, Türkçe kullanıcı deneyimi ve kişisel veri gizliliği öncelikleriyle geliştirilen açık kaynak bir Android finans takip uygulamasıdır. Uygulama, günlük para hareketlerini anlamayı kolaylaştırırken yatırım varlıklarını ve finansal hedefleri tek bir akışta görmeyi sağlar.
+<img src="screenshots/banner.png" alt="Sist Ana Ekran Önizleme" width="620" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"/>
 
-> Sist yatırım tavsiyesi vermez. Gösterilen fiyatlar ve hesaplamalar yalnızca kişisel takip ve bilgilendirme amaçlıdır.
+<br><br>
 
----
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Android](https://img.shields.io/badge/Android-SDK%2026--36-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?style=for-the-badge&logo=jetpack-compose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2F%20MVVM-FF6F00?style=for-the-badge)](https://developer.android.com/topic/architecture)
+[![License](https://img.shields.io/badge/Lisans-MIT-yellow?style=for-the-badge)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/batuhd/sist?style=for-the-badge&color=2E7D32&label=S%C3%BCr%C3%BCm)](https://github.com/batuhd/sist/releases/latest)
 
-## İçindekiler
-
-- [Öne Çıkanlar](#öne-çıkanlar)
-- [Özellikler](#özellikler)
-- [Gizlilik ve Güvenlik](#gizlilik-ve-güvenlik)
-- [Veri Kaynakları](#veri-kaynakları)
-- [İndir](#indir)
-- [Kaynak Kodundan Derleme](#kaynak-kodundan-derleme)
-- [Proje Yapısı](#proje-yapısı)
-- [Mimari Yaklaşım](#mimari-yaklaşım)
-- [Tasarım Sistemi](#tasarım-sistemi)
-- [Sık Sorulan Sorular](#sık-sorulan-sorular)
-- [Yol Haritası](#yol-haritası)
-- [Yasal Uyarı](#yasal-uyarı)
-- [Lisans](#lisans)
+</div>
 
 ---
 
-## Öne Çıkanlar
-
-| | |
-|---|---|
-| **Yerel veri** | Finansal kayıtlar cihazdaki Room veritabanında tutulur. |
-| **Kapsamlı takip** | Hesap, işlem, bütçe, borç, taksit ve yatırım kayıtları tek uygulamada. |
-| **Piyasa fiyatları** | Hisse, ETF ve Türkiye yatırım fonları için güncel fiyat desteği. |
-| **Widget desteği** | Altı ana ekran widget'ı: portföy, bütçe, net varlık, hızlı işlem, portföy dağılımı ve takip listesi. |
-| **Kişiselleştirme** | Her widget için renk teması ve yazı boyutu seçenekleri; tüm widget'lara tek seferde uygulama. |
-| **Modern arayüz** | Jetpack Compose ve Material 3 tabanlı, açık ve koyu tema desteği. |
-| **Çevrimdışı kullanım** | İnternet olmadan kayıt ekleme ve yerel finans takibi. |
-| **Biyometrik koruma** | Parmak izi ve yüz tanıma ile uygulama erişimi. |
+> ⚠️ **Önemli Yasal Bilgilendirme:** Sist, yatırım tavsiyesi, portföy danışmanlığı veya finansal yönlendirme vermez. Uygulama içerisindeki veriler (BIST hisseleri, fonlar, döviz kurları, piyasa hesaplamaları) sadece kişisel analiz ve takip amaçlıdır.
 
 ---
 
-## Özellikler
-
-### Hesap Yönetimi
-
-- Nakit, banka, yatırım ve diğer hesap türleri
-- Birden fazla hesapla ayrı ayrı bakiye takibi
-- Hesaplar arası transfer kaydı
-- Varsayılan nakit ve portföy hesapları
-
-### Gelir ve Gider Takibi
-
-- Gelir, gider ve transfer işlemleri
-- İşlem tarihi ve saati
-- Kategori ve ödeme yöntemi seçimi
-- Not ve etiket desteği
-- Aylara göre listeleme
-- Tarihe veya tutara göre sıralama
-- Liste ve grafik görünümü
-- Kategori bazlı gider dağılımı
-
-### Tekrarlayan İşlemler
-
-- Maaş, kira, fatura ve abonelik gibi düzenli işlemler
-- Günlük, haftalık, aylık ve yıllık tekrar seçenekleri
-- Başlangıç ve bitiş tarihi
-- Aktif veya pasif durum kontrolü
-- Otomatik işlem ve bildirim altyapısı
-
-### Bütçe Planlama
-
-- Aylık genel bütçe
-- Kategori bazlı bütçeler
-- Harcama ilerlemesi
-- Limit aşımı kontrolü
-- Ana ekran bütçe widget'ı
-
-### Borç ve Taksit Takibi
-
-- Verilen ve alınan borçlar
-- Borç yönü ve durum takibi
-- Taksit planları
-- Taksit tutarı, vade ve ödeme durumu
-- Yaklaşan ödemeler için bildirim altyapısı
-
-### Portföy Takibi
-
-- Hisse senedi, ETF ve yatırım fonu kaydı
-- Alım ve satım geçmişi
-- Varlık bazında maliyet ve miktar takibi
-- Güncel fiyat ve toplam değer
-- Günlük kar ve zarar görünümü
-- Portföy dağılımı
-- Varlık detay ekranı
-
-### Bildirimler ve Arka Plan İşlemleri
-
-- Günlük piyasa kapanış özeti
-- Fiyat uyarıları
-- Bütçe kontrolü
-- Tekrarlayan işlem bildirimleri
-- WorkManager ile planlı arka plan görevleri
-- Cihaz yeniden başlatıldığında gerekli görevlerin yeniden planlanması
-
-### Ana Ekran Widget'ları
-
-Altı widget, uygulamanın tasarım diliyle birebir uyumlu çalışır:
-
-- **Portföy widget'ı:** Toplam değer, kar/zarar ve en hareketli varlıklar
-- **Bütçe widget'ı:** Aylık bütçe ilerlemesi, kategori bütçeleri ve aşım projeksiyonu
-- **Toplam Varlık widget'ı:** Hesaplar ve portföy kırılımı, hesap bazlı detaylar
-- **Hızlı İşlem widget'ı:** Gelir, gider ve transfer butonları, sık kullanılan kategori kısayolları
-- **Portföy Dağılımı widget'ı:** Varlık türü dağılımı ve varlık bazlı listeler
-- **Takip Listesi widget'ı:** Seçtiğiniz sembollerin güncel fiyatları
-
-Widget kişiselleştirme:
-
-- Her widget için ayrı **renk teması**: Koyu Yeşil (marka), Koyu, Açık veya Sistem teması
-- Her widget için ayrı **yazı boyutu**: Normal, Büyük veya Çok Büyük
-- Widget'lar ana ekranda sürüklenerek yeniden boyutlandırılabilir; her boyutta içerik düzenlenir
-- **Ayarlar > Widget Ayarları** ekranından tüm widget'lara aynı anda renk ve yazı boyutu uygulanabilir
-
-### Görsel Deneyim
-
-- Açık ve koyu tema
-- Sistem temasına uyum
-- Orman yeşili ve altın vurgulu tasarım dili
-- Tutarlar için hizalı ve okunabilir tipografi
-- Boş durumlarda yönlendirici aksiyonlar
-- Küçük ekranlar için uyarlanmış alt navigasyon
+## 📌 İçindekiler
+- [Uygulama Vizyonu](#-uygulama-vizyonu)
+- [Uygulama Ekran Görüntüleri](#-ekran-g%C3%B6r%C3%BCnt%C3%BCleri)
+- [Temel Özellikler & Fonksiyonel Modüller](#-temel-%C3%B6zellikler--mod%C3%BCller)
+  - [1. Hesap ve Cüzdan Yönetimi](#1-hesap-ve-c%C3%BCzdan-y%C3%B6netimi)
+  - [2. Gelir & Gider (Kasa) Takibi](#2-gelir--gider-kasa-takibi)
+  - [3. Bütçe ve Harcama Disiplini](#3-b%C3%BCt%C3%A7e-ve-harcama-disiplini)
+  - [4. Borç & Taksit Takip Sistemi](#4-bor%C3%A7--taksit-takip-sistemi)
+  - [5. Yatırım & Portföy Yönetimi (BIST, TEFAS, ETF)](#5-yat%C3%B1r%C3%B1m--portf%C3%B6y-y%C3%B6netimi-bist-tefas-etf)
+  - [6. Tekrarlayan & Otomatik İşlemler](#6-tekrarlayan--otomatik-%C4%B0%C5%9Flemler)
+  - [7. Android Glance Ana Ekran Widget Ekosistemi](#7-android-glance-ana-ekran-widget-ekosistemi)
+- [Sist Tasarım Sistemi (Design Tokens)](#-sist-tasar%C3%BDm-sistemi-design-tokens)
+- [Gizlilik, Güvenlik ve Veri Politikası](#-gizlilik-g%C3%BCvenlik-ve-veri-politikas%C3%BD)
+- [Piyasa Veri Kaynakları & Entegrasyonlar](#-piyasa-veri-kaynaklar%C3%BD--entegrasyonlar)
+- [Teknoloji Yığını & Mimari Yapı](#-teknoloji-y%C3%BD%C4%9F%C3%BDn%C3%BD--mimari-yap%C3%BD)
+- [Klasör ve Paket Mimarisi](#-klas%C3%B6r-ve-paket-mimarisi)
+- [Geliştirici Kurulumu & Kaynak Koddan Derleme](#-geli%C5%9Ftirici-kurulumu--kaynak-koddan-derleme)
+- [Arka Plan Görevleri (WorkManager & Boot)](#-arka-plan-g%C3%B6revleri-workmanager--boot)
+- [Sıkça Sorulan Sorular (SSS)](#-s%C3%BDk%C3%A7a-sorulan-sorular-sss)
+- [Gelecek Yol Haritası (Roadmap)](#-gelecek-yol-haritas%C3%BD-roadmap)
+- [Lisans](#-lisans)
 
 ---
 
-## Gizlilik ve Güvenlik
+## 🌟 Uygulama Vizyonu
 
-Sist kişisel finans uygulaması olduğu için veri saklama davranışı özellikle sınırlı tutulmuştur.
+Günümüz finans uygulamalarının çoğu verilerinizi üçüncü parti sunucularda toplar, abonelik modelleri dayatır ya da hisse senedi/fon takibi ile günlük gelir-gider takibini birbirinden ayırır.
 
-### Veriler nerede tutulur?
-
-Hesaplar, işlemler, bütçeler, borçlar, taksitler ve portföy kayıtları cihazdaki Room veritabanında tutulur. Uygulama, kişisel finans kayıtlarını kendi sunucusuna göndermez.
-
-Fiyat güncellemesi yapılırken yalnızca seçilen varlığın sembolü ilgili fiyat sağlayıcısına gönderilir. Bu istek, kişisel hesap veya işlem kayıtlarını içermez.
-
-### Cloud Backup davranışı
-
-Uygulamanın Android Auto Backup desteği kapatılmıştır:
-
-```xml
-android:allowBackup="false"
-```
-
-Bu nedenle uygulama silindiğinde yerel finans kayıtları otomatik olarak geri yüklenmez. Önemli kayıtlarınızı korumak için gelecekte planlanan dışa aktarma özelliği kullanılabilir hale geldiğinde manuel yedek almanız önerilir.
-
-### Release logları
-
-HTTP gövde loglaması yalnızca debug build'lerinde açıktır. Release build'lerinde ağ loglaması kapalıdır. Böylece fiyat sağlayıcılarından dönen yanıtların veya geçici erişim bilgilerinin cihaz loglarına yazılma riski azaltılır.
-
-### İmza anahtarı
-
-v2.0.1 sürümü yeni bir release imza anahtarıyla oluşturulmuştur. Bu nedenle v2.0.0 ve önceki sürümlerden v2.0.1 üzerine doğrudan güncelleme yapılamaz. Eski uygulamanın kaldırılıp yeni APK'nın kurulması gerekir.
-
-Keystore ve `keystore.properties` dosyaları `.gitignore` kapsamındadır ve repoya eklenmemelidir.
+**Sist**, tam olarak bu kopukluğu gidermek üzere tasarlandı:
+1. **Bütünleşik Yaklaşım:** Maaşınızdan market fişinize, Borsa İstanbul hisselerinizden TEFAS fonlarınıza, kredi kartı taksitlerinizden arkadaşınıza verdiğiniz borca kadar tüm finansal hayatınız tek ekranda.
+2. **Kayıtsız Şartsız Gizlilik:** Hiçbir kullanıcı hesabı açmanız gerekmez. Bütün verileriniz **yalnızca telefonunuzun dahili hafızasındaki SQLite/Room veritabanında** yaşar.
+3. **Kusursuz Tipografi ve Ergonomi:** Finansal rakamların hızlı okunmasını sağlayan tabular rakam (`tnum`) tipografisi, derin orman yeşili (`#00634D`) ve altın (`#7A5C0C`) vurgularıyla bezeli modern Material 3 arayüzü.
 
 ---
 
-## Veri Kaynakları
+## 📱 Ekran Görüntüleri
 
-Sist, piyasa fiyatlarını aşağıdaki kaynaklardan alır:
-
-| Varlık türü | Kaynak |
-|---|---|
-| Hisse senedi | Yahoo Finance |
-| ETF | Yahoo Finance |
-| Türkiye yatırım fonu | FVT, Fintables |
-
-Bu servisler yalnızca fiyat ve fon bilgisi almak için kullanılır. Kaynakların kullanım şartları, erişilebilirliği, gecikmeleri ve veri doğruluğu ilgili sağlayıcıların sorumluluğundadır.
-
----
-
-## İndir
-
-Hazır APK dosyalarını [GitHub Releases](https://github.com/batuhd/sist/releases) sayfasından indirebilirsiniz.
-
-| Dosya | Kullanım |
-|---|---|
-| `sist-vX.Y.Z.apk` | İmzalı, optimize edilmiş release sürümü. Günlük kullanım için önerilir. |
-| `sist-vX.Y.Z-debug.apk` | Geliştirme ve hata ayıklama amaçlı sürüm. |
-
-### APK kurulumu
-
-1. Releases sayfasından `sist-vX.Y.Z.apk` dosyasını indirin.
-2. Dosyayı Android cihazınıza aktarın veya cihazdan indirin.
-3. APK dosyasını açın.
-4. Android isterse bilinmeyen kaynaklardan kurulum iznini verin.
-5. Kurulumu tamamlayıp uygulamayı açın.
+<div align="center">
+  <table style="border: none; border-collapse: collapse;">
+    <tr>
+      <td align="center" width="25%">
+        <img src="screenshots/1.jpg" alt="Ana Sayfa ve Varlık Özeti" width="100%" style="border-radius: 16px;"/>
+        <br><sub><b>Ana Sayfa & Net Varlık</b></sub>
+      </td>
+      <td align="center" width="25%">
+        <img src="screenshots/2.jpg" alt="İşlemler ve Gelir Gider Listesi" width="100%" style="border-radius: 16px;"/>
+        <br><sub><b>İşlemler & Filtreleme</b></sub>
+      </td>
+      <td align="center" width="25%">
+        <img src="screenshots/3.jpg" alt="Portföy ve Varlık Analizi" width="100%" style="border-radius: 16px;"/>
+        <br><sub><b>Canlı Portföy & Kâr/Zarar</b></sub>
+      </td>
+      <td align="center" width="25%">
+        <img src="screenshots/4.jpg" alt="Bütçe ve Borç Yönetimi" width="100%" style="border-radius: 16px;"/>
+        <br><sub><b>Bütçe & Taksit Takibi</b></sub>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
-## Kaynak Kodundan Derleme
+## 🚀 Temel Özellikler & Modüller
 
-### Gereksinimler
+### 1. Hesap ve Cüzdan Yönetimi
+* **Çoklu Hesap Desteği:** Nakit Cüzdan, Vadesiz Banka Hesabı, Kredi Kartı, Yatırım Hesabı ve Özel Birikim hesapları tanımlayabilme.
+* **Hesaplar Arası Virman/Transfer:** Komisyonsuz veya masraflı para transferleri oluşturarak hesap bakiyelerini eşzamanlı güncelleme.
+* **Varsayılan Hesaplar:** Hızlı ekleme ekranlarında otomatik seçilecek ana hesapları belirleme.
 
-- Android Studio'nun güncel bir sürümü
-- JDK 17
-- Android SDK 36
-- Android SDK Build Tools
-- Android SDK Platform Tools
+### 2. Gelir & Gider (Kasa) Takibi
+* **Zengin İşlem Detayları:** Miktar, işlem tarihi/saati, işlem tipi (Gelir, Gider, Transfer), kategori, ödeme yöntemi (Nakit, Kredi Kartı, Havale/EFT) ve özel etiket/notlar.
+* **Aylık Kırılımlar & Filtreleme:** Aylara göre listeleme, kategori bazlı harcama dağılımı pasta grafikleri ve gelişmiş sıralama (Tarih, Tutar vb.).
+* **Hızlı Düzenleme/Silme:** Tek dokunuşla geçmiş işlemleri güncelleme veya geri alma.
 
-### Projeyi çalıştırma
+### 3. Bütçe ve Harcama Disiplini
+* **Esnek Bütçeleme:** Aylık genel tavan harcama limiti veya kategori bazlı (Market, Ulaşım, Eğlence vb.) bütçe hedefleri belirleme.
+* **Canlı İlerleme Çubuğu:** Yapılan harcamaların bütçeye oranını anlık takip etme, kritik eşiklerde görsel uyarı renkleri.
+* **Aşım Projeksiyonu & Bildirimler:** Ay sonu tahmini harcama limit aşımı uyarısı ve periyodik arka plan bütçe denetimleri.
 
-```bash
-cd sist
-./gradlew assembleDebug
-```
+### 4. Borç & Taksit Takip Sistemi
+* **Alacak ve Borç Defteri:** Kime ne kadar borç verildiği veya kimden ne kadar borç alındığının detaylı kaydı.
+* **Kredi Kartı / Alışveriş Taksitleri:** Toplam tutar, taksit sayısı, kalan taksitler, aylık ödeme vadesi ve ödeme durumu takibi.
+* **Yaklaşan Ödeme Bildirimleri:** Vadesi yaklaşan taksit ve borçlar için hatırlatıcılar.
 
-Windows PowerShell için:
+### 5. Yatırım & Portföy Yönetimi (BIST, TEFAS, ETF)
+* **Desteklenen Varlık Sınıfları:** 
+  * 🇹🇷 **Borsa İstanbul (BIST)** Pay Senetleri
+  * 🌐 **Global Hisseler & ETF'ler** (ABD Borsaları vb.)
+  * 📈 **Türkiye Yatırım Fonları (TEFAS / FVT)**
+  * 🪙 **Döviz & Kıymetli Madenler** (Gram Altın, Dolar, Euro vb.)
+* **İşlem Geçmişi & Maliyet Hesabı:** Kademeli Alım/Satım emirleri, komisyon ücreti dahil ortalama maliyet (`averageCost`) hesaplaması.
+* **Canlı Kâr / Zarar & Portföy Dağılımı:** Günlük ve kümülatif kâr/zarar tutarı, yüzdesel getiri, varlık türüne göre portföy ağırlık analizi.
+* **Fiyat Alarmları:** Belirlediğiniz hedef fiyat eşiklerine ulaşıldığında anlık bildirim alma.
 
-```powershell
-git clone https://github.com/batuhd/sist.git
-Set-Location sist
-.\gradlew assembleDebug
-```
+### 6. Tekrarlayan & Otomatik İşlemler
+* **Düzenli Gelir/Giderler:** Maaş, kira, fatura, abonelikler (Netflix, Spotify vb.) ve aidatların sisteme tanıtılması.
+* **Esnek Periyotlar:** Günlük, haftalık, aylık veya yıllık tekrar periyotları.
+* **Arka Planda Otomatik İşleme:** Vade günü geldiğinde WorkManager arka plan servisi ile işlemin otomatik olarak cüzdana işlenmesi ve kullanıcıya bildirilmesi.
 
-Debug APK şu konumda oluşur:
+### 7. Android Glance Ana Ekran Widget Ekosistemi
+Android'in modern **Glance (Jetpack Compose tabanlı AppWidget)** kütüphanesi ile geliştirilmiş, 6 farklı boyutlandırılabilir widget:
+
+| Widget Türü | Fonksiyonu ve İçeriği |
+| :--- | :--- |
+| **📈 Portföy Widget'ı** | Toplam portföy değeri, günlük kâr/zarar durumu ve portföydeki en hareketli varlıklar. |
+| **🎯 Bütçe Widget'ı** | Aylık bütçe doluluk oranı, kalan bütçe ve kategori bazlı harcama durumu. |
+| **💎 Net Varlık Widget'ı** | Tüm nakit, banka ve yatırım varlıklarının toplam konsolide net değeri. |
+| **⚡ Hızlı İşlem Widget'ı** | Uygulamayı açmadan ana ekrandan anında Gelir/Gider girişi yapmayı sağlayan mini konsol. |
+| **📊 Portföy Dağılımı** | Hisse, Fon ve Nakit dağılımını gösteren özet görünüm. |
+| **👀 Takip Listesi (Watchlist)** | Favori hisse ve fonlarınızın güncel fiyatlarını gösteren canlı borsa şeridi. |
+
+> 🎨 **Widget Özelleştirme:** Her widget için **Marka Yeşili**, **Koyu Tema**, **Açık Tema** veya **Sistem Teması** seçilebilir; yazı boyutları ayarlanabilir.
+
+---
+
+## 🎨 Sist Tasarım Sistemi (Design Tokens)
+
+Sist, finansal verilerin okunabilirliğini ve görsel şıklığı en üst düzeye çıkarmak için **Sist Design Tokens** standardını kullanır:
+
+* **İmza Renk Paleti:** 
+  * Primary: Derin Orman Yeşili (`#00634D` Light / `#5BDBAF` Dark)
+  * Tertiary (İmza Vurgu): Altın (`#7A5C0C` Light / `#EBC15F` Dark)
+  * Hero Panel: Her iki temada da derin yeşil-siyah yüzey (`#06281C`)
+* **Finansal Semantik Renkler:**
+  * Kâr / Gelir (`Positive`): `#0E7A55` / `#4EDC9D`
+  * Zarar / Gider (`Negative`): `#C43B3B` / `#FF7B7B`
+  * Uyarı (`Warning`): `#B45309` / `#FBBF24`
+* **Tabular Tipografi (`tnum`):** Tutarların alt alta sıralandığında rakam genişliklerinin kaymaması için özel `FontFeatureSettings = "tnum"` kullanımı (`SistTypography`).
+* **Ölçü ve Biçim Standartları:** `SistDimens` (4dp - 40dp) ve `SistRadius` (8dp - 28dp pill) ile tutarlı arayüz geometrisi.
+
+---
+
+## 🔒 Gizlilik, Güvenlik ve Veri Politikası
+
+* **%100 Yerel Veritabanı:** Bilgileriniz harici bir sunucuya veya bulut hesabına aktarılmaz.
+* **Devre Dışı Bırakılmış Cloud Backup:** Hassas finansal verilerin Google Drive veya Android Auto Backup ortamlarına istem dışı yüklenmesini engellemek için `android:allowBackup="false"` olarak kilitlenmiştir.
+* **Biyometrik Güvenlik:** `androidx.biometric` entegrasyonu sayesinde uygulamayı açarken Parmak İzi veya Yüz Tanıma (BiometricPrompt) kilidi.
+* **Ağ Güvenliği & Sıfır Log:** HTTP loglama (`HttpLoggingInterceptor`) yalnızca `DEBUG` derlemelerinde aktiftir. `RELEASE` modunda hiçbir ağ yanıtı veya hassas veri loglara yazılmaz.
+
+---
+
+## 📡 Piyasa Veri Kaynakları & Entegrasyonlar
+
+Sist, anlık ve günlük piyasa verilerini aşağıdaki açık ve güvenilir kaynaklardan çeker:
+
+| Varlık Kategorisi | Entegrasyon Kaynağı | Protokol & Yöntem |
+| :--- | :--- | :--- |
+| **Hisse Senetleri & Global ETF'ler** | Yahoo Finance API | Retrofit HTTP REST (JSON) |
+| **Türkiye Yatırım Fonları (TEFAS)** | FVT (Fintables) | Retrofit HTTP REST / Data Parsing |
+| **Döviz & Emtia Kurları** | Finans Web Servisleri | Asenkron Veri Sağlayıcı |
+
+> *Not: Veri çekme isteklerinde yalnızca varlığın sembolü (örn. `THYAO.IS`, `AAPL`, `TI2`) gönderilir; kullanıcının sahip olduğu miktar veya maliyet gibi kişisel veriler asla iletilmez.*
+
+---
+
+## 🛠️ Teknoloji Yığını & Mimari Yapı
+
+Sist, modern Android mühendisliğinin en güncel standartlarına göre inşa edilmiştir:
 
 ```text
-app/build/outputs/apk/debug/app-debug.apk
+┌─────────────────────────────────────────────────────────────┐
+│                 Compose UI Katmanı (Screens)                │
+│       HomeScreen • AssetsScreen • TransactionsScreen        │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ StateFlow / UI Events
+┌──────────────────────────────▼──────────────────────────────┐
+│                    ViewModel Katmanı                        │
+│         HomeViewModel • AssetsViewModel • etc.              │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Use Cases & Coroutines
+┌──────────────────────────────▼──────────────────────────────┐
+│                     Domain Katmanı                          │
+│     Models • Repository Interfaces • Business Logic         │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Repository Implementation
+┌──────────────────────────────▼──────────────────────────────┐
+│                      Data Katmanı                           │
+│  Room DB (SQLite/KSP) • Retrofit • Glance • DataStore       │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Release derleme
-
-Release derlemek için kendi keystore dosyanızı kullanın. Keystore bilgilerini repoya eklemeyin.
-
-Proje kökünde `keystore.properties` oluşturun:
-
-```properties
-storeFile=release-key.jks
-storePassword=YOUR_STORE_PASSWORD
-keyAlias=sist-release
-keyPassword=YOUR_KEY_PASSWORD
-```
-
-Yeni keystore oluşturmak için:
-
-```bash
-keytool -genkeypair \
-  -v \
-  -keystore release-key.jks \
-  -alias sist-release \
-  -keyalg RSA \
-  -keysize 4096 \
-  -validity 10000
-```
-
-Release APK üretmek için:
-
-```bash
-./gradlew assembleRelease
-```
-
-Release APK şu konumda oluşur:
-
-```text
-app/build/outputs/apk/release/app-release.apk
-```
-
-### Doğrulama
-
-```bash
-./gradlew assembleDebug
-./gradlew assembleRelease
-```
-
-Release APK imzasını Android SDK Build Tools içindeki `apksigner` ile kontrol edebilirsiniz:
-
-```bash
-apksigner verify --verbose app/build/outputs/apk/release/app-release.apk
-```
+* **Programlama Dili:** Kotlin 2.1.0 (JVM 17)
+* **Kullanıcı Arayüzü:** Jetpack Compose & Material 3
+* **Mimari:** MVVM + Clean Architecture Prensipleri
+* **Dependency Injection:** Manuel DI Container (`AppContainer`) — *Hızlı derleme, sıfır annotation-processing yükü ve AGP 9 uyumluluğu için Hilt yerine tercih edilmiştir.*
+* **Veritabanı:** Room Database 2.7+ (KSP ile derlenen DAO'lar ve Entity'ler)
+* **Arka Plan Yönetimi:** AndroidX WorkManager (Periyodik ve Kısıtlı Görevler)
+* **Widget Teknolojisi:** AndroidX Glance AppWidget 1.1+
+* **Grafik Çizimi:** Vico Compose Charting Engine
+* **Ağ Katmanı:** OkHttp3 & Retrofit 2 (GSON / Kotlin Serialization)
+* **Depolama / Tercihler:** Jetpack DataStore Preferences
 
 ---
 
-## Proje Yapısı
+## 📂 Klasör ve Paket Mimarisi
 
 ```text
 app/src/main/java/com/sinop/sist/
+│
 ├── data/
-│   ├── local/          # Room veritabanı, DAO ve entity sınıfları
-│   ├── remote/         # Retrofit servisleri, DTO ve fiyat sağlayıcıları
-│   ├── repository/     # Repository implementasyonları
-│   └── mapper/         # Data ve domain modeli dönüşümleri
+│   ├── local/               # Room Veritabanı, DAO'lar, Entity tanımları
+│   │   ├── dao/             # AccountDao, AssetDao, TransactionDao, BudgetDao...
+│   │   ├── database/        # SistDatabase sınıfı
+│   │   └── entity/          # Room Entity modelleri
+│   ├── mapper/              # Entity <-> Domain Model dönüştürücüleri
+│   ├── remote/              # Retrofit API servisleri, DTO'lar, FVT Provider
+│   └── repository/          # Domain arayüzlerinin somut implementasyonları
+│
 ├── domain/
-│   ├── model/          # Uygulama domain modelleri
-│   ├── repository/     # Repository arayüzleri
-│   └── usecase/        # Uygulama iş kuralları
-├── presentation/       # Compose ekranları, ViewModel ve widget'lar
-├── ui/theme/           # Tema, renk, tipografi ve tasarım token'ları
-├── util/               # Ortak yardımcı fonksiyonlar
-└── worker/             # WorkManager görevleri
+│   ├── model/               # Saf Kotlin veri sınıfları (Asset, Transaction, Budget...)
+│   ├── repository/          # Repository arayüz kontratları
+│   └── usecase/             # RefreshAssetPricesUseCase vb. iş mantıkları
+│
+├── presentation/            # Ekranlar ve UI bileşenleri
+│   ├── assets/              # Portföy ekranı, varlık ekleme/detay ve alım-satım
+│   ├── budget/              # Bütçe yönetimi ve harcama limitleri
+│   ├── categories/          # Kategori yönetimi ekranı
+│   ├── components/          # Ortak TopBar, Kartlar, Boş Durum (EmptyState) bileşenleri
+│   ├── debts/               # Borç ve Taksit takip ekranı
+│   ├── home/                # Ana sayfa dashboard ve özet görünüm
+│   ├── navigation/          # Compose Navigation (NavHost, BottomBar, Routes)
+│   ├── recurring/           # Tekrarlayan işlemler yönetim ekranı
+│   ├── settings/            # Ayarlar, tema, bildirim ve log izleyici ekranları
+│   ├── transactions/        # Gelir/Gider listesi ve işlem ekleme ekranı
+│   └── widget/              # Glance AppWidget altyapısı, alıcıları ve temaları
+│
+├── ui/theme/                # SistColors, SistTypography, SistDimens, Theme
+├── util/                    # Para birimi formatlayıcıları, uzantılar, CrashLogger
+└── worker/                  # WorkManager arka plan işçileri (Fiyat, Bütçe, Alarm, Kapanış)
 ```
 
 ---
 
-## Mimari Yaklaşım
+## ⚙️ Geliştirici Kurulumu & Kaynak Koddan Derleme
 
-Sist, MVVM ve manuel dependency injection yaklaşımını kullanır.
+### Ön Koşullar
+* **Android Studio:** Ladybug / Meerkat veya üzeri güncel sürüm
+* **JDK:** Java 17
+* **Android SDK:** Compile SDK 36 (minor API level 1), Min SDK 26
 
-```text
-Compose UI
-    ↓
-ViewModel
-    ↓
-Use Case
-    ↓
-Repository interface
-    ↓
-Repository implementation
-    ↓
-Room DAO veya Remote API
+### 1. Depoyu Klonlayın
+```bash
+git clone https://github.com/batuhd/sist.git
+cd sist
 ```
 
-- **Presentation:** Compose ekranları ve kullanıcı etkileşimleri
-- **ViewModel:** UI state ve ekran davranışları
-- **Domain:** Uygulama iş kuralları ve repository sözleşmeleri
-- **Data:** Room, Retrofit, DTO, mapper ve repository implementasyonları
-- **Worker:** Planlı bildirimler, fiyat yenileme ve otomatik işlemler
-- **AppContainer:** Manuel dependency injection ve uygulama bağımlılıklarının merkezi
+### 2. Debug Sürümünü Derleyin
+```bash
+# macOS / Linux
+./gradlew assembleDebug
 
-Projede Hilt kullanılmaz. Dependency injection, `SistApplication.kt` içindeki `AppContainer` ile yönetilir.
+# Windows PowerShell
+.\gradlew assembleDebug
+```
+*Oluşan APK:* `app/build/outputs/apk/debug/app-debug.apk`
 
----
-
-## Tasarım Sistemi
-
-v2.0.0 ile uygulama genelinde merkezi bir tasarım sistemi kullanılmaya başlanmıştır.
-
-- `SistColors`: Semantik renkler, kar/zarar renkleri, uyarılar ve kategori vurguları
-- `SistTypography`: Tutarlar için okunabilir ve hizalı tipografi
-- `SistDimens`: Tutarlı boşluk değerleri
-- `SistRadius`: Ortak köşe yarıçapları
-- `SistMotion`: Animasyon süreleri ve easing değerleri
-- `SistTopBar`, `SummaryCards`, `TransactionItem`, `EmptyState`: Paylaşılan Compose bileşenleri
-
-Detaylı tasarım token dokümantasyonu: [`docs/design-tokens.md`](docs/design-tokens.md)
-
----
-
-## Sık Sorulan Sorular
-
-### Uygulama kişisel finans verilerimi sunucuya gönderiyor mu?
-
-Hayır. Hesap, işlem, bütçe, borç, taksit ve portföy kayıtları cihazda tutulur. Fiyat güncellemesi için yalnızca varlık sembolü kullanılır.
-
-### Uygulamayı silersem veriler geri gelir mi?
-
-Cloud Backup kapalı olduğu için otomatik olarak geri gelmez. Uygulama silindiğinde yerel veriler de silinir.
-
-### İnternet olmadan kullanabilir miyim?
-
-Yerel kayıt, hesap ve işlem özellikleri internet olmadan çalışır. Piyasa fiyatı yenileme, fiyat uyarıları ve bazı bildirimler ağ bağlantısı gerektirir.
-
-### Eski sürümden v2.0.1'e güncelleme yapabilir miyim?
-
-v2.0.1 yeni bir imza anahtarı kullandığı için v2.0.0 ve önceki sürümlerden doğrudan güncelleme yapılamaz. Eski uygulamayı kaldırıp yeni sürümü kurmanız gerekir.
-
-### Yatırım fiyatları garanti edilir mi?
-
-Hayır. Fiyatlar üçüncü taraf veri kaynaklarından alınır ve gecikmeli, eksik veya hatalı olabilir. Uygulama yatırım tavsiyesi vermez.
-
-### Widget'ların rengini ve yazı boyutunu nasıl değiştiririm?
-
-Her widget'ın başlığındaki dişli ikonundan o widget'a özel tema ve yazı boyutu seçebilirsiniz. Ayrıca uygulama içindeki **Ayarlar > Widget Ayarları** ekranından tüm widget'lara aynı anda uygulayabilirsiniz. Widget boyutları Android ana ekranı tarafından yönetilir; widget'a basılı tutup sürükleyerek değiştirilir.
-
-### Release ve debug APK arasındaki fark nedir?
-
-Release APK optimize edilmiş ve günlük kullanım için hazırlanmış sürümdür. Debug APK geliştirme ve hata ayıklama amacıyla kullanılır; loglama ve geliştirme araçları içerebilir.
+### 3. İmzalı Release Sürümünü Derleme
+Proje kök dizininde bir `keystore.properties` dosyası oluşturun:
+```properties
+storeFile=release-key.jks
+storePassword=KEYSTORE_PAROLANIZ
+keyAlias=sist-release
+keyPassword=KEY_PAROLANIZ
+```
+Ardından derleme komutunu çalıştırın:
+```bash
+./gradlew assembleRelease
+```
+*Oluşan APK:* `app/build/outputs/apk/release/app-release.apk`
 
 ---
 
-## Yol Haritası
+## ⏰ Arka Plan Görevleri (WorkManager & Boot)
 
-- [x] Gelir ve gider takibi
-- [x] Çoklu hesap desteği
-- [x] Hesaplar arası transfer
-- [x] Portföy yönetimi
-- [x] Hisse, ETF ve yatırım fonu takibi
-- [x] Bütçe planlama
-- [x] Borç ve taksit takibi
-- [x] Tekrarlayan işlemler
-- [x] Altı ana ekran widget'ı (portföy, bütçe, net varlık, hızlı işlem, dağılım, takip listesi)
-- [x] Widget renk teması ve yazı boyutu kişiselleştirme
-- [x] Bildirimler
-- [x] Fiyat uyarıları
-- [x] Biyometrik doğrulama altyapısı
-- [x] Açık ve koyu tema
-- [x] Android cloud backup'ın kapatılması
-- [ ] CSV ve Excel dışa aktarma
-- [ ] Manuel veri içe aktarma
-- [ ] Gelişmiş portföy analizleri
-- [ ] Özelleştirilebilir kategori simgeleri
+Sist, kullanıcı uygulamayı açmasa bile finansal süreçleri aksatmamak için WorkManager ile entegre çalışır:
+
+* **`PriceRefreshWorker`:** Portföydeki varlıkların piyasa fiyatlarını periyodik olarak günceller.
+* **`PriceAlertWorker`:** Kullanıcının kurduğu hedef fiyat alarmlarını kontrol eder ve eşik aşıldığında bildirim fırlatır.
+* **`BudgetCheckWorker`:** Aylık harcama limitlerini denetler; aşım tehlikesi olduğunda uyarı gönderir.
+* **`RecurringTransactionWorker`:** Vadesi gelen tekrarlayan gelir/gider kayıtlarını otomatik olarak işler.
+* **`MarketCloseNotificationWorker`:** Gün sonunda piyasa kapanış özetini ve günlük portföy performansını bildirir.
+* **`BootReceiver`:** Cihaz yeniden başlatıldığında (`BOOT_COMPLETED`) tüm zamanlanmış görevleri sisteme tekrar kaydeder.
 
 ---
 
-## Yasal Uyarı
+## ❓ Sıkça Sorulan Sorular (SSS)
 
-Sist yalnızca genel bilgilendirme ve kişisel finans takibi amacıyla geliştirilmiştir. Uygulamada yer alan hisse senedi, yatırım fonu, ETF, döviz, kripto varlık, emtia, endeks ve diğer finansal verilere ilişkin bilgiler yatırım tavsiyesi, yatırım danışmanlığı, alım satım önerisi veya finansal danışmanlık hizmeti değildir.
+<details>
+<summary><b>1. Uygulama internet bağlantısı olmadan çalışır mı?</b></summary>
+Evet. Sist'in temel çekirdeği (gelir/gider kaydı, cüzdan takibi, bütçeleme, borç/taksit hesapları) tamamen çevrimdışı (offline) çalışır. İnternet bağlantısı sadece piyasa fiyatlarını güncellemek ve fiyat alarmlarını tetiklemek için gereklidir.
+</details>
 
-Uygulamada sunulan fiyatlar, grafikler, istatistikler, bildirimler ve diğer içerikler yalnızca bilgi amaçlıdır. Bu içeriklerin doğruluğu, güncelliği, eksiksizliği veya belirli bir amaca uygunluğu garanti edilmez. Veri sağlayıcılarından kaynaklanan gecikme, kesinti, eksiklik veya hatalardan doğabilecek sonuçlardan uygulama geliştiricisi sorumlu tutulamaz.
+<details>
+<summary><b>2. Verilerim Google hesabıma veya sunuculara yedeklenir mi?</b></summary>
+Hayır. Gizlilik prensipleri gereği Android Otomatik Yedekleme (`allowBackup`) kapalıdır. Uygulamayı kaldırdığınızda veriler cihazdan silinir. (Yakın zamanda manuel CSV/JSON dışa aktarma özelliği sunulacaktır.)
+</details>
 
-Yatırım kararları kişisel risk profili, finansal durum ve hedefler değerlendirilerek verilmelidir. Gerektiğinde Sermaye Piyasası Kurulu tarafından yetkilendirilmiş yatırım kuruluşlarından veya uzman danışmanlardan profesyonel destek alınmalıdır.
+<details>
+<summary><b>3. Neden Hilt veya Dagger kullanılmadı?</b></summary>
+Sist, Android Gradle Plugin 9.x ve modern KSP optimizasyonları ile tam uyum sağlamak, derleme sürelerini milisaniyeler seviyesinde tutmak ve gereksiz kod üretiminin önüne geçmek için <code>AppContainer</code> tabanlı Manuel Dependency Injection kullanmaktadır.
+</details>
 
-Gerçek para ile yapılacak işlemlerde tüm sorumluluk kullanıcıya aittir. Sist ve geliştiricileri, uygulamanın kullanımından doğabilecek doğrudan veya dolaylı maddi, manevi, finansal veya veri kaybından sorumlu değildir.
+<details>
+<summary><b>4. Widget renkleri ana uygulamadaki temadan bağımsız değiştirilebilir mi?</b></summary>
+Evet. Her widget'ın üst kısmındaki ayar simgesine dokunarak o widget'a özel renk paleti (Marka Yeşili, Koyu, Açık veya Sistem) ve yazı boyutu tanımlayabilirsiniz.
+</details>
 
 ---
 
-## Lisans
+## 🗺️ Gelecek Yol Haritası (Roadmap)
 
-Bu proje [MIT Lisansı](LICENSE) ile lisanslanmıştır.
+- [x] Çoklu Hesap ve Kasa Yönetimi
+- [x] BIST, Fon ve Global Varlık Portföy Takibi
+- [x] 6 Farklı Glance Ana Ekran Widget'ı
+- [x] Koyu & Açık Tema + Özel Marka Renk Paleti
+- [x] Biyometrik (Parmak İzi / Yüz Tanıma) Uygulama Kilidi
+- [x] Piyasa Kapanış Bildirimleri ve Fiyat Alarmları
+- [ ] ⏳ **CSV & Excel Formatında İçe/Dışa Aktarma (Export/Import)**
+- [ ] ⏳ **Grafiksel Kategori Raporları ve PDF Finansal Özet Çıktısı**
+- [ ] ⏳ **Özelleştirilebilir Kategori Simgeleri & Renk Seçici**
 
 ---
+
+## 📄 Lisans
+
+Bu proje **[MIT Lisansı](LICENSE)** altında lisanslanmıştır. Özgürce inceleyebilir, geliştirebilir ve katkıda bulunabilirsiniz.
 
 <div align="center">
-  <sub>Türkiye'de özenle geliştirildi.</sub>
+  <br>
+  <sub>Sist Finansal özgürlüğünüz için sinopta açık kaynaklı olarak geliştirildi.</sub>
 </div>
